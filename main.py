@@ -1,20 +1,16 @@
 import pygame
-from dataclasses import dataclass
-
-class Sprite:
-    health = 5
-    color = (120, 180, 255, 255)
-
+from tilemap import load_map
 
 
 def game() -> None:
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     
+    tilemap = load_map("assets/maps/map1.json")
+    tileset_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
+
     clock = pygame.time.Clock()
-    
-    img = pygame.image.load("assets/ninja_adventure/Actor/Characters/Pig/SeparateAnim/Idle.png").convert()
-    img = pygame.transform.scale(img, (1280, 720))
+ 
     running = True
     while running:
 
@@ -24,7 +20,9 @@ def game() -> None:
         
 
         screen.fill((120, 180, 255, 255))
-        screen.blit(img,(0,0))
+
+        tilemap.draw(screen, tileset_img)
+
         pygame.display.update()
         
         print("tick " + str(pygame.time.get_ticks()))
