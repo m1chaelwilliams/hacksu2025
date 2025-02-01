@@ -11,3 +11,9 @@ class Player(pygame.sprite.Sprite):
             Constants.TILESIZE,
         )
         self.hitbox = self.drect.copy()
+
+    def update(self) -> None:
+        pass
+
+    def draw(self, screen: pygame.Surface) -> None:
+        pass
