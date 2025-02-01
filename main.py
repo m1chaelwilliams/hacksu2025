@@ -19,9 +19,20 @@ def game() -> None:
                 running = False
         
 
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_a]:
+            pos[0] -= 1
+        if keys[pygame.K_d]:
+            pos[0] += 1
+        if keys[pygame.K_w]:
+            pos[1] -= 1
+        if keys[pygame.K_s]:
+            pos[1] += 1
+
         screen.fill((120, 180, 255, 255))
 
         tilemap.draw(screen, tileset_img)
+        screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
 
         pygame.display.update()
         
@@ -34,4 +45,3 @@ def game() -> None:
 
 
 if __name__ == "__main__":
-    game()
