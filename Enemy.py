@@ -52,9 +52,10 @@ class Enemy(pygame.sprite.Sprite):
             Constants.TILESIZE,
         )
         self.hitbox_topleft_offset = (4, 4)
-        self.hitbox = Rect(
-            self.drect.x + self.hitbox_topleft_offset[0],
-            self.drect.y + self.hitbox_topleft_offset[1],
+        self.vel = Vector2(0, 0)
+        self.hitbox: Rect = Rect(
+            init_pos[0] * Constants.TILESIZE + self.hitbox_topleft_offset[0],
+            init_pos[1] * Constants.TILESIZE + self.hitbox_topleft_offset[1],
             Constants.TILESIZE - self.hitbox_topleft_offset[0] * 2,
             Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
         )
