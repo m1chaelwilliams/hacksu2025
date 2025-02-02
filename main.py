@@ -212,7 +212,7 @@ def game() -> None:
             projectile.move_y(dt)
 
             if projectile.alive:
-                if projectile.drect.colliderect(player.get_hitbox()):
+                if projectile.hitbox.colliderect(player.get_hitbox()):
                     sounds["hit"].play()
                     projectile.alive = False
                     player.health -= projectile.damage
@@ -221,7 +221,7 @@ def game() -> None:
                         running = False
 
                 for tree in trees:
-                    if projectile.drect.colliderect(tree.get_hitbox()):
+                    if projectile.hitbox.colliderect(tree.get_hitbox()):
                         projectile.alive = False
                         sounds["hit"].play()
         enemy_projectiles = list(filterfalse(lambda p: not p.alive, enemy_projectiles))
@@ -235,7 +235,7 @@ def game() -> None:
 
                 killed_enemy = False
                 for enemy in enemies:
-                    if enemy.get_hitbox().colliderect(projectile.drect):
+                    if enemy.get_hitbox().colliderect(projectile.hitbox):
                         projectile.alive = False
                         sounds["hit"].play()
                         enemy.curr_health -= projectile.damage
@@ -246,7 +246,7 @@ def game() -> None:
                     enemies = list(filterfalse(lambda p: not p.alive, enemies))
 
                 for tree in trees:
-                    if projectile.drect.colliderect(tree.get_hitbox()):
+                    if projectile.hitbox.colliderect(tree.get_hitbox()):
                         projectile.alive = False
                         sounds["hit"].play()
         projectiles = list(filterfalse(lambda p: not p.alive, projectiles))
