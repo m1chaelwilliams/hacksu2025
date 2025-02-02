@@ -4,21 +4,21 @@ from pygame.math import Vector2
 from constants import Constants
 import random
 
-def random_spawn_location()-> tuple[int, int]:
-    location = random.randint(1,4)
+
+def random_spawn_location() -> tuple[int, int]:
+    location = random.randint(1, 4)
     if location == 1:
-        #top
+        # top
         return (5, 0)
     elif location == 2:
-        #right
+        # right
         return (5, 5)
     elif location == 3:
-        #bottom
+        # bottom
         return (5, 5)
     elif location == 4:
-        #left
+        # left
         return (5, 5)
-
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -32,14 +32,16 @@ class Enemy(pygame.sprite.Sprite):
                 init_pos: tuple[int, int] = (5, 5)
                 ):
         super().__init__()
-        
+
         self.srect = Rect(0, 0, 16, 16)
-        self.direction = direction 
+        self.direction = direction
         self.vel = Vector2(0, 0)
+        self.speed = speed 
         self.max_health = health
         self.curr_health = health
         init_pos = random_spawn_location()
         self.drect = Rect(
+            # 
             init_pos[0] * Constants.TILESIZE,
             init_pos[1] * Constants.TILESIZE,
             Constants.TILESIZE,
@@ -66,7 +68,7 @@ class Enemy(pygame.sprite.Sprite):
     def move_x(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
         self.hitbox.x += self.vel.x * dt
-        
+
     def move_y(self, dt: float) -> None:
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
@@ -85,7 +87,7 @@ class Enemy(pygame.sprite.Sprite):
 class Zombie(Enemy):
     def __init__(self, x, y, width, height, speed=1, health=15):
         super().__init__(x, y, width, height, Vector2(0, 1), speed, health)
-        self.attack_power = 5 
+        self.attack_power = 5
         self.sprite_sheet = pygame.image.load(
             "assets/characters/NinjaDark/SpriteSheet.png"
         )

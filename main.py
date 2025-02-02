@@ -1,12 +1,13 @@
 import pygame
 from constants import Constants
 from tilemap import load_map
-from utils import get_hitboxes
+from utils import get_hitboxes, load_img
 from player import Player
 from Enemy import Enemy, Zombie
 from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
+from animation import Animation
 
 
 class Entity:
@@ -35,6 +36,9 @@ def game() -> None:
         tileset_floor_img_unscaled,
         Constants.TILESIZE / Constants.IMPORT_TILESIZE,
     )
+
+    shuriken_img = load_img("assets/weapons/shuriken/shuriken.png")
+
     tree_rects = get_hitboxes(
         0,
         tilemap.layers[1],
@@ -50,11 +54,10 @@ def game() -> None:
 
     clock = pygame.time.Clock()
 
-    player = Player([], (14.5,9.5))
+    player = Player([], (14.5, 9.5))
     projectiles: list[Projectile] = []
 
-    
-    zombie = Zombie(100, 100, 50, 50, speed=2)
+    zombie = Zombie(100, 100, 50, 50, speed=200)
     running = True
     dt = 0.0
 
@@ -86,7 +89,9 @@ def game() -> None:
                 Projectile(
                     (player.drect.x, player.drect.y),
                     proj_vec,
-                    200,
+                    1000,
+                    shuriken_img,
+                    Animation(0, 1, 0.08),
                 )
             )
 
@@ -137,8 +142,7 @@ def game() -> None:
         zombie.move_y(dt) 
         zombie.draw(screen)
 
-
-        #for enemie in enemies:
+        # for enemie in enemies:
         #   enemie.draw(screen)
 
         for projectile in projectiles:
@@ -170,8 +174,6 @@ def game() -> None:
         pygame.display.update()
 
         dt = clock.tick(60) / 1000.0
-        # foo = 1
-        # print(f"foo is {foo}", )
 
     pygame.quit()
 
