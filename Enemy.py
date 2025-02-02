@@ -5,22 +5,22 @@ from constants import Constants
 import random
 import utils
 from animation import Animation
-
+from typing import List, Union
 
 def random_spawn_location() -> tuple[int, int]:
     location = random.randint(1, 4)
     if location == 1:
         # top
-        return (16, 0)
+        return (7, 0)
     elif location == 2:
         # right
-        return (32, 16)
+        return (20, 5)
     elif location == 3:
         # bottom
-        return (16, 32)
+        return (0, 15)
     elif location == 4:
         # left
-        return (0, 16)
+        return (20, 20)
 
 
 class EnemyMovementState:
@@ -62,10 +62,9 @@ class Enemy(pygame.sprite.Sprite):
             Constants.TILESIZE,
         )
         self.hitbox_topleft_offset = (4, 4)
-        self.vel = Vector2(0, 0)
-        self.hitbox: Rect = Rect(
-            init_pos[0] * Constants.TILESIZE + self.hitbox_topleft_offset[0],
-            init_pos[1] * Constants.TILESIZE + self.hitbox_topleft_offset[1],
+        self.hitbox = Rect(
+            self.drect.x + self.hitbox_topleft_offset[0],
+            self.drect.y + self.hitbox_topleft_offset[1],
             Constants.TILESIZE - self.hitbox_topleft_offset[0] * 2,
             Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
         )
@@ -198,7 +197,8 @@ class Gladiator(Enemy):
         else:
             self.vel.y = 0
 
-    def zombie_stage(self, dt: float):
-        print(f"deltaTime: {dt}")
-        
-    
+    def enemy_stage(self, enemies: List[Union[Zombie, Gladiator]]) -> None:
+        # Your logic for the enemies here
+        for enemy in enemies:
+            # Perform actions on the enemy
+            pass

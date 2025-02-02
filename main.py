@@ -74,9 +74,11 @@ def game() -> None:
                 random.randint(0, Constants.WINDOW_WIDTH),
                 random.randint(0, Constants.WINDOW_HEIGHT),
                 speed=200,
-                health=3,
+                health=10,
             ),
         )
+    enemy_stage_cycle = 30.0
+
     running = True
     dt = 0.0
 
@@ -188,8 +190,8 @@ def game() -> None:
             enemy.move_y(dt)
             enemy.draw(screen)
 
-        # for enemie in enemies:
-        #   enemie.draw(screen)
+        # append when time has passed
+
 
         for projectile in projectiles:
             projectile.draw(screen)
