@@ -22,7 +22,6 @@ class Entity:
         return self.r
 
 
-
 def draw_player_ui(
     screen: pygame.Surface,
     imgs: dict[str, pygame.Surface],
@@ -41,8 +40,6 @@ def draw_player_ui(
             ),
         )
         cur_x += Constants.TILESIZE
-
-
 
 
 def game() -> None:
@@ -93,22 +90,22 @@ def game() -> None:
     enemy_projectiles: list[Projectile] = []
 
     enemies = []
-    for i in range(2):
-        location = SpawnLoc.random_spawn_side()
-        enemies.append(
-            Zombie(
-                location[0],
-                location[1],
-            ),
-        )
-        location2 = SpawnLoc.random_spawn_side()
-        enemies.append(
-            Gladiator(
-                location2[0],
-                location2[1],
-            ),
-        )
-    
+    # for i in range(2):
+    #     location = SpawnLoc.random_spawn_side()
+    #     enemies.append(
+    #         Zombie(
+    #             location[0],
+    #             location[1],
+    #         ),
+    #     )
+    #     location2 = SpawnLoc.random_spawn_side()
+    #     enemies.append(
+    #         Gladiator(
+    #             location2[0],
+    #             location2[1],
+    #         ),
+    #     )
+
     # enemies.append(
     #     Gladiator(Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT,),
     # )
@@ -121,9 +118,10 @@ def game() -> None:
     running = True
     dt = 0.0
 
-    font = pygame.font.Font(None, 36) 
-    timer = 0 
-    last_time_update = pygame.time.get_ticks() 
+    font = pygame.font.Font(None, 36)
+    timer = 0
+    wave = 1
+    last_time_update = pygame.time.get_ticks()
     tree_rects = get_hitboxes(
         0,
         tilemap.layers[1],
@@ -137,7 +135,11 @@ def game() -> None:
         "hit": pygame.Sound("assets/sfx/Hit.wav"),
     }
 
-
+    num_enemies_to_spawn = 2
+    num_enemies_spawned = 0
+    enemy_spawn_rate = 2.0
+    enemy_spawn_duration_left = enemy_spawn_rate
+    spawning_enemies = True
 
     while running:
         events = pygame.event.get()
@@ -149,27 +151,61 @@ def game() -> None:
                     running = False
 
         current_time = pygame.time.get_ticks()
-        if current_time - last_time_update >= 1000:  
+        if current_time - last_time_update >= 1000:
             timer += 1
             last_time_update = current_time
-        
-        if len(enemies) == 0:
-            for i in range(random.randint(10,20)):
-                location = SpawnLoc.random_spawn_side()
-                enemies.append(
-                    Zombie(
-                        location[0],
-                        location[1],
-                    ),
-                )
-                location2 = SpawnLoc.random_spawn_side()
-                enemies.append(
-                    Gladiator(
-                        location2[0],
-                        location2[1],
-                    ),
-                )
 
+        if spawning_enemies:
+            enemy_spawn_duration_left -= dt
+            if enemy_spawn_duration_left <= 0.0:
+                print("spawning an enemy")
+                num_enemies_spawned += 1
+                if num_enemies_spawned == num_enemies_to_spawn:
+                    print("finished spawning enemies")
+                    print(num_enemies_spawned)
+                    print(num_enemies_to_spawn)
+                    spawning_enemies = False
+                    num_enemies_to_spawn *= 2
+                    print(f"next wave enemy count: {num_enemies_to_spawn}")
+                enemy_spawn_duration_left = enemy_spawn_rate
+                location = SpawnLoc.random_spawn_side()
+                enemy_choice = random.randint(0, 1)
+                if enemy_choice == 0:
+                    enemies.append(
+                        Zombie(
+                            location[0],
+                            location[1],
+                        )
+                    )
+                elif enemy_choice == 1:
+                    enemies.append(
+                        Gladiator(
+                            location[0],
+                            location[1],
+                        )
+                    )
+            pass
+
+        if not spawning_enemies and len(enemies) == 0:
+            num_enemies_spawned = 0
+            spawning_enemies = True
+            wave += 1
+            enemy_spawn_rate *= 0.9
+            # for i in range(random.randint(10, 20)):
+            #     location = SpawnLoc.random_spawn_side()
+            #     enemies.append(
+            #         Zombie(
+            #             location[0],
+            #             location[1],
+            #         ),
+            #     )
+            #     location2 = SpawnLoc.random_spawn_side()
+            #     enemies.append(
+            #         Gladiator(
+            #             location2[0],
+            #             location2[1],
+            #         ),
+            #     )
 
         player.update(dt, events)
         if player.attacking:
@@ -322,9 +358,13 @@ def game() -> None:
 
         draw_player_ui(screen, imgs, player)
 
-        timer_text = font.render(f"Next Wave: {timer}", True, (255, 255, 255))
+        timer_text = font.render(f"Elapsed time: {timer}", True, (255, 255, 255))
         screen.blit(timer_text, (10, 600))
-        print(timer)
+
+        wave_text = font.render(f"Wave: {wave}", True, (255, 255, 255))
+        screen_size = pygame.display.get_window_size()
+        screen.blit(wave_text, ((screen_size[0] - wave_text.width) / 2, 0.0))
+        # print(timer)
         pygame.display.update()
 
         dt = clock.tick(60) / 1000.0
