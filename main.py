@@ -53,25 +53,9 @@ def game() -> None:
         "shuriken": load_img("assets/weapons/shuriken/shuriken.png"),
     }
 
-    # tileset_floor_img_unscaled = pygame.image.load(
-    #     "assets/tilesets/TilesetFloor.png",
-    # )
-    # tileset_trees_img_unscaled = pygame.image.load(
-    #     "assets/tilesets/TilesetNature.png",
-    # )
-    # tileset_trees_img = pygame.transform.scale_by(
-    #     tileset_trees_img_unscaled,
-    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    # )
-    # tileset_floor_img = pygame.transform.scale_by(
-    #     tileset_floor_img_unscaled,
-    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    # )
-
     shuriken_img = load_img("assets/weapons/shuriken/shuriken.png")
 
     tree_rects = get_hitboxes(
-        0,
         tilemap.layers[1],
         (
             Constants.TILESIZE * 2 - 10,
@@ -85,36 +69,11 @@ def game() -> None:
 
     clock = pygame.time.Clock()
 
-    player = Player([], (14.5, 9.5))
+    player = Player([], (Constants.WINDOW_WIDTH / 2.0, Constants.WINDOW_HEIGHT / 2.0))
     projectiles: list[Projectile] = []
     enemy_projectiles: list[Projectile] = []
 
     enemies = []
-    # for i in range(2):
-    #     location = SpawnLoc.random_spawn_side()
-    #     enemies.append(
-    #         Zombie(
-    #             location[0],
-    #             location[1],
-    #         ),
-    #     )
-    #     location2 = SpawnLoc.random_spawn_side()
-    #     enemies.append(
-    #         Gladiator(
-    #             location2[0],
-    #             location2[1],
-    #         ),
-    #     )
-
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT,),
-    # )
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 10, Constants.WINDOW_HEIGHT,),
-    # )
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 + 30, Constants.WINDOW_HEIGHT,),
-    # )
     running = True
     dt = 0.0
 
@@ -122,12 +81,6 @@ def game() -> None:
     timer = 0
     wave = 1
     last_time_update = pygame.time.get_ticks()
-    tree_rects = get_hitboxes(
-        0,
-        tilemap.layers[1],
-        (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
-        (5, 5),
-    )
 
     mixer.music.load("assets/music/doom.mp3")
     mixer.music.play(loops=100)
@@ -308,36 +261,10 @@ def game() -> None:
 
             enemy.draw(screen)
 
-        # for enemie in enemies:
-        #   enemie.draw(screen)
-
         for projectile in projectiles:
             projectile.draw(screen)
         for projectile in enemy_projectiles:
             projectile.draw(screen)
-
-        # for rect in trees:
-        #     pygame.draw.rect(
-        #         screen,
-        #         (255, 0, 0),
-        #         rect.get_hitbox(),
-        #         1,
-        #     )
-
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 255, 0),
-        #     player.hitbox,
-        #     1,
-        # )
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 0, 255),
-        #     player.drect,
-        #     1,
-        # )
-        #
-        # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
 
         draw_player_ui(screen, imgs, player)
 

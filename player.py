@@ -58,8 +58,8 @@ class Player(pygame.sprite.Sprite):
         )
 
         self.drect: Rect = Rect(
-            init_pos[0] * Constants.TILESIZE,
-            init_pos[1] * Constants.TILESIZE,
+            init_pos[0],
+            init_pos[1],
             Constants.TILESIZE,
             Constants.TILESIZE,
         )
@@ -159,3 +159,4 @@ class Player(pygame.sprite.Sprite):
             Constants.TILESIZE,
             Constants.TILESIZE,
         )
+

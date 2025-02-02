@@ -12,7 +12,6 @@ def load_img(path: str) -> pygame.Surface:
 
 
 def get_hitboxes(
-    target_id: int,
     layer: Tileset,
     hitbox_size: tuple[int, int],
     topleft_offset: tuple[int, int],
@@ -21,7 +20,7 @@ def get_hitboxes(
     for i, item in enumerate(layer.tiles):
         item_id = item - layer.index_offset
         print(item_id)
-        if item_id != target_id:
+        if item_id < 0:
             continue
         x = int(i % layer.width) * Constants.TILESIZE
         y = int(i / layer.width) * Constants.TILESIZE
@@ -35,3 +34,4 @@ def get_hitboxes(
         )
         print(rects[len(rects) - 1])
     return rects
+
