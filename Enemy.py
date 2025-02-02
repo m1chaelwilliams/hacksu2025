@@ -181,7 +181,7 @@ class Gladiator(Enemy):
     starting_health = 5
     speed = 50
     attack_power = 2
-    attack_cooldown = 0.5
+    attack_cooldown = 2
 
     def __init__(self, x, y):
         super().__init__(x, y, Vector2(0, 1), health=Gladiator.starting_health)

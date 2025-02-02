@@ -169,9 +169,18 @@ def game() -> None:
 
             if projectile.alive:
                 if projectile.drect.colliderect(player.get_hitbox()):
+                    sounds["hit"].play()
+                    projectile.alive = False
                     player.health -= projectile.damage
-                    print("you died!")
-                    running = False
+                    if player.health < 0:
+                        print("you died!")
+                        running = False
+
+                for tree in trees:
+                    if projectile.drect.colliderect(tree.get_hitbox()):
+                        projectile.alive = False
+                        sounds["hit"].play()
+        enemy_projectiles = list(filterfalse(lambda p: not p.alive, enemy_projectiles))
 
         for projectile in projectiles:
             projectile.update(dt)
