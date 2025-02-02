@@ -77,7 +77,7 @@ def game() -> None:
                 health=10,
             ),
         )
-    enemy_stage_cycle = 30.0
+    enemy_stage_cycle = 15.0
 
     running = True
     dt = 0.0
@@ -94,6 +94,9 @@ def game() -> None:
     sounds: dict[str, pygame.Sound] = {
         "hit": pygame.Sound("assets/sfx/Hit.wav"),
     }
+
+    #time tracking
+    start_ticks = pygame.time.get_ticks()  #starting time of the game
 
     while running:
         events = pygame.event.get()
@@ -121,7 +124,29 @@ def game() -> None:
                     Animation(0, 1, 0.08),
                 )
             )
+        # Calculate elapsed time
+        elapsed_time = (pygame.time.get_ticks() - start_ticks) / 1000  # Time in seconds
+        print(f"Time elapsed: {elapsed_time:.2f} seconds")
 
+        if elapsed_time - 0 >= enemy_stage_cycle:
+            for i in range(1):
+                enemies.append(
+                    Zombie(
+                        random.randint(0, Constants.WINDOW_WIDTH),
+                        random.randint(0, Constants.WINDOW_HEIGHT),
+                        speed=200,
+                        health=3,
+                    ),
+                )
+                enemies.append(
+                    Gladiator(
+                        random.randint(0, Constants.WINDOW_WIDTH),
+                        random.randint(0, Constants.WINDOW_HEIGHT),
+                        speed=200,
+                        health=10,
+                    ),
+                )
+        self.last_spawn_time = elapsed_time
         player.move_x(dt)
         player.hitbox = handle_collisons_one_to_many_x(
             player.hitbox,
@@ -190,9 +215,6 @@ def game() -> None:
             enemy.move_y(dt)
             enemy.draw(screen)
 
-        # append when time has passed
-
-
         for projectile in projectiles:
             projectile.draw(screen)
 
@@ -204,23 +226,8 @@ def game() -> None:
                 1,
             )
 
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 255, 0),
-        #     player.hitbox,
-        #     1,
-        # )
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 0, 255),
-        #     player.drect,
-        #     1,
-        # )
-        #
-        # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
-
+        
         pygame.display.update()
-
         dt = clock.tick(60) / 1000.0
 
     pygame.quit()

@@ -165,6 +165,9 @@ class Zombie(Enemy):
             self.vel.y = 0
 
 
+
+
+
 class Gladiator(Enemy):
 
     img: pygame.Surface = None
@@ -197,8 +200,3 @@ class Gladiator(Enemy):
         else:
             self.vel.y = 0
 
-    def enemy_stage(self, enemies: List[Union[Zombie, Gladiator]]) -> None:
-        # Your logic for the enemies here
-        for enemy in enemies:
-            # Perform actions on the enemy
-            pass
