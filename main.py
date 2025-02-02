@@ -17,6 +17,16 @@ def game() -> None:
 
     running = True
     dt = 0.0
+
+    tree_rects = get_hitboxes(
+        0,
+        tilemap.layers[1],
+        (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
+        (5, 5),
+    )
+
+    tileset_floor_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
+    tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
     while running:
 
         for e in pygame.event.get():
