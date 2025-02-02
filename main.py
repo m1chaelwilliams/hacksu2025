@@ -174,13 +174,14 @@ def game() -> None:
         player.draw(screen)
 
         for zombie in zombies:
-            zombie.update(events)
+            zombie.update(dt, events)
             zombie.follow_player(player.drect, dt)
-            zombie.zombie_stage(dt)
             zombie.move_x(dt)
             zombie.move_y(dt)
             zombie.draw(screen)
 
+        # for enemie in enemies:
+        #   enemie.draw(screen)
 
         for projectile in projectiles:
             projectile.draw(screen)
