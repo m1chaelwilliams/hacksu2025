@@ -8,6 +8,7 @@ from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
 from animation import Animation
+import pygame.mixer as mixer
 
 
 class Entity:
@@ -68,6 +69,9 @@ def game() -> None:
         (5, 5),
     )
 
+    mixer.music.load("assets/music/doom.mp3")
+    mixer.music.play(loops=100)
+
     while running:
         events = pygame.event.get()
         for e in events:
@@ -77,7 +81,7 @@ def game() -> None:
                 if e.key == pygame.K_q:
                     running = False
 
-        player.update(events)
+        player.update(dt, events)
         if player.attacking:
             player.attacking = False
             mouse_pos = pygame.mouse.get_pos()
@@ -138,8 +142,8 @@ def game() -> None:
 
         zombie.update(events)
         zombie.follow_player(player.drect, dt)
-        zombie.move_x(dt) 
-        zombie.move_y(dt) 
+        zombie.move_x(dt)
+        zombie.move_y(dt)
         zombie.draw(screen)
 
         # for enemie in enemies:
@@ -156,19 +160,19 @@ def game() -> None:
                 1,
             )
 
-        pygame.draw.rect(
-            screen,
-            (0, 255, 0),
-            player.hitbox,
-            1,
-        )
-        pygame.draw.rect(
-            screen,
-            (0, 0, 255),
-            player.drect,
-            1,
-        )
-
+        # pygame.draw.rect(
+        #     screen,
+        #     (0, 255, 0),
+        #     player.hitbox,
+        #     1,
+        # )
+        # pygame.draw.rect(
+        #     screen,
+        #     (0, 0, 255),
+        #     player.drect,
+        #     1,
+        # )
+        #
         # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
 
         pygame.display.update()
