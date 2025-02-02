@@ -9,6 +9,7 @@ from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_m
 from itertools import filterfalse
 from animation import Animation
 import pygame.mixer as mixer
+import random
 
 
 class Entity:
@@ -57,8 +58,17 @@ def game() -> None:
 
     player = Player([], (14.5, 9.5))
     projectiles: list[Projectile] = []
-    
-    zombie = Zombie(100, 100, 50, 50, speed=200)
+
+    zombies = []
+    for i in range(10):
+        zombies.append(
+            Zombie(
+                random.randint(0, Constants.WINDOW_WIDTH),
+                random.randint(0, Constants.WINDOW_HEIGHT),
+                speed=200,
+                health=3,
+            ),
+        )
     running = True
     dt = 0.0
 
@@ -125,6 +135,20 @@ def game() -> None:
             projectile.move_y(dt)
 
             if projectile.alive:
+
+                killed_zombie = False
+                for zombie in zombies:
+                    if zombie.get_hitbox().colliderect(projectile.drect):
+                        projectile.alive = False
+                        sounds["hit"].play()
+                        zombie.curr_health -= projectile.damage
+                        print(zombie.curr_health)
+                        if zombie.curr_health <= 0.0:
+                            zombie.alive = False
+                            killed_zombie = True
+                if killed_zombie:
+                    zombies = list(filterfalse(lambda p: not p.alive, zombies))
+
                 for tree in trees:
                     if projectile.drect.colliderect(tree.get_hitbox()):
                         projectile.alive = False
@@ -149,11 +173,12 @@ def game() -> None:
         )
         player.draw(screen)
 
-        zombie.update(events)
-        zombie.follow_player(player.drect, dt)
-        zombie.move_x(dt)
-        zombie.move_y(dt)
-        zombie.draw(screen)
+        for zombie in zombies:
+            zombie.update(events)
+            zombie.follow_player(player.drect, dt)
+            zombie.move_x(dt)
+            zombie.move_y(dt)
+            zombie.draw(screen)
 
         # for enemie in enemies:
         #   enemie.draw(screen)
