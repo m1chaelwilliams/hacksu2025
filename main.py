@@ -1,4 +1,5 @@
 import pygame
+from pygame import Rect
 from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes, load_img
@@ -20,24 +21,51 @@ class Entity:
         return self.r
 
 
+def draw_player_ui(
+    screen: pygame.Surface,
+    imgs: dict[str, pygame.Surface],
+    player: Player,
+) -> None:
+    cur_x = 0
+    for i in range(player.health):
+        screen.blit(
+            imgs["heart"],
+            (cur_x, 0),
+            Rect(
+                Constants.TILESIZE * 4,
+                0,
+                Constants.TILESIZE,
+                Constants.TILESIZE,
+            ),
+        )
+        cur_x += Constants.TILESIZE
+
+
 def game() -> None:
     pygame.init()
     screen = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
     tilemap = load_map("assets/maps/map1.json")
-    tileset_floor_img_unscaled = pygame.image.load(
-        "assets/tilesets/TilesetFloor.png",
-    )
-    tileset_trees_img_unscaled = pygame.image.load(
-        "assets/tilesets/TilesetNature.png",
-    )
-    tileset_trees_img = pygame.transform.scale_by(
-        tileset_trees_img_unscaled,
-        Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    )
-    tileset_floor_img = pygame.transform.scale_by(
-        tileset_floor_img_unscaled,
-        Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    )
+    imgs: dict[str, pygame.Surface] = {
+        "heart": load_img("assets/ui/heart.png"),
+        "tileset_floor": load_img("assets/tilesets/TilesetFloor.png"),
+        "tileset_trees": load_img("assets/tilesets/TilesetNature.png"),
+        "shuriken": load_img("assets/weapons/shuriken/shuriken.png"),
+    }
+
+    # tileset_floor_img_unscaled = pygame.image.load(
+    #     "assets/tilesets/TilesetFloor.png",
+    # )
+    # tileset_trees_img_unscaled = pygame.image.load(
+    #     "assets/tilesets/TilesetNature.png",
+    # )
+    # tileset_trees_img = pygame.transform.scale_by(
+    #     tileset_trees_img_unscaled,
+    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
+    # )
+    # tileset_floor_img = pygame.transform.scale_by(
+    #     tileset_floor_img_unscaled,
+    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
+    # )
 
     shuriken_img = load_img("assets/weapons/shuriken/shuriken.png")
 
@@ -58,23 +86,20 @@ def game() -> None:
 
     player = Player([], (14.5, 9.5))
     projectiles: list[Projectile] = []
+    enemy_projectiles: list[Projectile] = []
 
     enemies = []
-    for i in range(10):
+    for i in range(2):
         enemies.append(
             Zombie(
                 random.randint(0, Constants.WINDOW_WIDTH),
                 random.randint(0, Constants.WINDOW_HEIGHT),
-                speed=200,
-                health=3,
             ),
         )
         enemies.append(
             Gladiator(
                 random.randint(0, Constants.WINDOW_WIDTH),
                 random.randint(0, Constants.WINDOW_HEIGHT),
-                speed=200,
-                health=3,
             ),
         )
     running = True
@@ -137,6 +162,17 @@ def game() -> None:
 
         player.update_drect_from_hitbox()
 
+        for projectile in enemy_projectiles:
+            projectile.update(dt)
+            projectile.move_x(dt)
+            projectile.move_y(dt)
+
+            if projectile.alive:
+                if projectile.drect.colliderect(player.get_hitbox()):
+                    player.health -= projectile.damage
+                    print("you died!")
+                    running = False
+
         for projectile in projectiles:
             projectile.update(dt)
             projectile.move_x(dt)
@@ -150,7 +186,6 @@ def game() -> None:
                         projectile.alive = False
                         sounds["hit"].play()
                         enemy.curr_health -= projectile.damage
-                        print(enemy.curr_health)
                         if enemy.curr_health <= 0.0:
                             enemy.alive = False
                             killed_enemy = True
@@ -168,30 +203,45 @@ def game() -> None:
         tilemap.draw_layer(
             0,
             screen,
-            tileset_floor_img,
+            imgs["tileset_floor"],
             sprite_size=(Constants.TILESIZE, Constants.TILESIZE),
             tileset_width_in_tiles=22,
         )
         tilemap.draw_layer(
             1,
             screen,
-            tileset_trees_img,
+            imgs["tileset_trees"],
             sprite_size=(Constants.TILESIZE * 2, Constants.TILESIZE * 2),
             tileset_width_in_tiles=12,
         )
         player.draw(screen)
 
+        hit_player = False
         for enemy in enemies:
             enemy.update(dt, events)
             enemy.follow_player(player.drect, dt)
             enemy.move_x(dt)
             enemy.move_y(dt)
+            if not hit_player and player.attacked_cooldown <= 0.0:
+                if enemy.wants_attack:
+                    enemy.attack(player, enemy_projectiles, imgs)
+                if enemy.get_hitbox().colliderect(player.get_hitbox()):
+                    hit_player = True
+                    player.health -= enemy.attack_power
+                    player.vel += enemy.vel * 50  # knockback player
+                    player.attacked_cooldown = Player.attacked_cooldown
+                    if player.health <= 0:
+                        print("you died")
+                        running = False
+
             enemy.draw(screen)
 
         # for enemie in enemies:
         #   enemie.draw(screen)
 
         for projectile in projectiles:
+            projectile.draw(screen)
+        for projectile in enemy_projectiles:
             projectile.draw(screen)
 
         for rect in trees:
@@ -216,6 +266,8 @@ def game() -> None:
         # )
         #
         # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
+
+        draw_player_ui(screen, imgs, player)
 
         pygame.display.update()
 
