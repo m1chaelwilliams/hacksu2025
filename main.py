@@ -14,12 +14,11 @@ class Entity:
     def get_hitbox(self):
         return self.r
 
-WINDOW_HEIGHT = 720
-WINDOW_WIDTH = 1280
+
 
 def game() -> None:
     pygame.init()
-    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    screen = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
     tilemap = load_map("assets/maps/map1.json")
     tileset_floor_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
     tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
@@ -63,6 +62,7 @@ def game() -> None:
 
         zombie.draw(screen)
         player.move_x(dt)
+
         player.hitbox = handle_collisons_one_to_many_x(
             player.hitbox,
             player.vel,
@@ -76,6 +76,7 @@ def game() -> None:
             player.vel,
             trees,
         )
+
         player.update_drect_from_hitbox()
 
         screen.fill((120, 180, 255, 255))
@@ -89,7 +90,7 @@ def game() -> None:
             tileset_width_in_tiles=12,
         )
         player.draw(screen)
-
+        zombie.draw(screen)
         for rect in tree_rects:
             pygame.draw.rect(
                 screen,
@@ -116,7 +117,7 @@ def game() -> None:
         pygame.display.update()
         
         print("tick " + str(pygame.time.get_ticks()))
-        clock.tick(60)
+        dt = clock.tick(60) / 1000.0
 
 
     pygame.quit()

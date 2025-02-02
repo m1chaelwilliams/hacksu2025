@@ -2,6 +2,23 @@ import pygame
 from pygame.rect import Rect
 from pygame.math import Vector2
 from constants import Constants
+import random
+
+def random_spawn_location()-> tuple[int, int]:
+    location = random.randint(1,4)
+    if location == 1:
+        return (Constants.WINDOW_WIDTH / 2, 0)
+    elif location == 2:
+        return (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2)
+    elif location == 3:
+        return (Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT)
+    elif location == 4:
+        return (0, Constants.WINDOW_HEIGHT / 2)
+    else:
+        print("Invalid location")
+
+
+    
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x: int, 
@@ -11,7 +28,7 @@ class Enemy(pygame.sprite.Sprite):
                 direction: Vector2 = Vector2(0, 1), 
                 speed: int = 1,
                 health: int = 10,
-                init_pos: tuple[int, int] = (0, 0)
+                init_pos: tuple[int, int] = (5, 5)
                 ):
         super().__init__()
         
@@ -21,8 +38,9 @@ class Enemy(pygame.sprite.Sprite):
         self.speed = speed 
         self.max_health = health
         self.curr_health = health
-
+        init_pos = random_spawn_location()
         self.drect = Rect(
+            # 
             init_pos[0] * Constants.TILESIZE,
             init_pos[1] * Constants.TILESIZE,
             Constants.TILESIZE,
@@ -40,12 +58,19 @@ class Enemy(pygame.sprite.Sprite):
         self.sprite_sheet = pygame.Surface((16, 16))
         self.sprite_sheet.fill((255, 0, 0))  # Red box for debugging
 
+    def update(self) -> None:
+        self.vel.x = 600
+        self.vel.y = 300
+
+
     def destroy(self):
         print("Enemy destroyed")
 
-    def move(self, dt: float) -> None:
+    def x_move(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
         self.hitbox.x += self.vel.x * dt
+        
+    def y_move(self, dt: float) -> None:
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
 

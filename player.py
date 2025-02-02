@@ -18,7 +18,7 @@ class Player(pygame.sprite.Sprite):
             16,
             16,
         )
-        
+
         self.drect: Rect = Rect(
             init_pos[0] * Constants.TILESIZE,
             init_pos[1] * Constants.TILESIZE,
@@ -37,6 +37,8 @@ class Player(pygame.sprite.Sprite):
     def update(self) -> None:
         self.vel.x = 0
         self.vel.y = 0
+
+
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
             self.vel.y = -Player.speed
@@ -46,6 +48,7 @@ class Player(pygame.sprite.Sprite):
             self.vel.y = Player.speed
         if keys[pygame.K_d]:
             self.vel.x = Player.speed
+
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(
@@ -60,10 +63,32 @@ class Player(pygame.sprite.Sprite):
     def move_x(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
         self.hitbox.x += self.vel.x * dt
+        self.clamp_on_edge(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
+
 
     def move_y(self, dt: float) -> None:
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
+        self.clamp_on_edge(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT)
+
+
+    def clamp_on_edge(self, screen_width: int, screen_height: int) -> None:
+        if self.drect.left < 0:
+            self.drect.left = 0
+            self.vel.x = 0
+        if self.drect.right > screen_width:
+            self.drect.right = screen_width
+            self.vel.x = 0
+        if self.drect.top < 0:
+            self.drect.top = 0
+            self.vel.y = 0
+        if self.drect.bottom > screen_height:
+            self.drect.bottom = screen_height
+            self.vel.y = 0
+
+        # Keep hitbox aligned with drect
+        self.hitbox.x = self.drect.x + self.hitbox_topleft_offset[0]
+        self.hitbox.y = self.drect.y + self.hitbox_topleft_offset[1]
 
     def get_hitbox(self) -> Rect:
         return self.hitbox
