@@ -7,7 +7,7 @@ from animation import Animation
 
 class Projectile:
 
-    lifespan = 1
+    lifespan = 5
 
     def __init__(
         self,

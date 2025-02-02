@@ -71,6 +71,9 @@ def game() -> None:
 
     mixer.music.load("assets/music/doom.mp3")
     mixer.music.play(loops=100)
+    sounds: dict[str, pygame.Sound] = {
+        "hit": pygame.Sound("assets/sfx/Hit.wav"),
+    }
 
     while running:
         events = pygame.event.get()
@@ -120,6 +123,12 @@ def game() -> None:
             projectile.update(dt)
             projectile.move_x(dt)
             projectile.move_y(dt)
+
+            if projectile.alive:
+                for tree in trees:
+                    if projectile.drect.colliderect(tree.get_hitbox()):
+                        projectile.alive = False
+                        sounds["hit"].play()
         projectiles = list(filterfalse(lambda p: not p.alive, projectiles))
 
         screen.fill((120, 180, 255, 255))
