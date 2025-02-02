@@ -91,6 +91,10 @@ class Player(pygame.sprite.Sprite):
                 self.attacking = True
 
         self.animations[self.direction + self.movement_state].update(dt)
+        #normalize
+        if self.vel.length() > Player.speed:
+            self.vel.normalize_ip() 
+            self.vel *= Player.speed 
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.vel.magnitude() > 0.0:
