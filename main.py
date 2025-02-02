@@ -120,7 +120,7 @@ def game() -> None:
         False,
     )
 
-    env = make_vec_env(lambda: BulletHellEnv(game), n_envs=4)
+    env = make_vec_env(lambda: BulletHellEnv(game), n_envs=1)
 
     model = PPO(
         "MlpPolicy",
@@ -178,6 +178,7 @@ def game() -> None:
             obs = env.reset()
             total_reward = 0
 
+        print(action)
         action = action[0]
         if action == 1:
             game.player.vel.x = game.player.speed
