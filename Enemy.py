@@ -10,16 +10,16 @@ def random_spawn_location() -> tuple[int, int]:
     location = random.randint(1, 4)
     if location == 1:
         # top
-        return (7, 0)
+        return (16, 0)
     elif location == 2:
         # right
-        return (20, 5)
+        return (32, 16)
     elif location == 3:
         # bottom
-        return (0, 15)
+        return (16, 32)
     elif location == 4:
         # left
-        return (20, 20)
+        return (0, 16)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -128,3 +128,7 @@ class Zombie(Enemy):
         else:
             self.vel.y = 0
 
+    def zombie_stage(self, dt: float):
+        print(f"deltaTime: {dt}")
+        
+    
