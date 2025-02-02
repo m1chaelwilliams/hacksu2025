@@ -4,7 +4,7 @@ from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes, load_img
 from player import Player
-from Enemy import Zombie, Gladiator
+from Enemy import Zombie, Gladiator, Robot
 from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
@@ -158,18 +158,14 @@ def game() -> None:
         if spawning_enemies:
             enemy_spawn_duration_left -= dt
             if enemy_spawn_duration_left <= 0.0:
-                print("spawning an enemy")
                 num_enemies_spawned += 1
                 if num_enemies_spawned == num_enemies_to_spawn:
-                    print("finished spawning enemies")
-                    print(num_enemies_spawned)
-                    print(num_enemies_to_spawn)
                     spawning_enemies = False
                     num_enemies_to_spawn *= 2
-                    print(f"next wave enemy count: {num_enemies_to_spawn}")
                 enemy_spawn_duration_left = enemy_spawn_rate
                 location = SpawnLoc.random_spawn_side()
-                enemy_choice = random.randint(0, 1)
+                enemy_choice = random.randint(wave - 3, wave - 1)
+                enemy_choice = max(0, enemy_choice)
                 if enemy_choice == 0:
                     enemies.append(
                         Zombie(
@@ -184,6 +180,8 @@ def game() -> None:
                             location[1],
                         )
                     )
+                else:
+                    enemies.append(Robot(location[0], location[1]))
             pass
 
         if not spawning_enemies and len(enemies) == 0:
@@ -191,21 +189,6 @@ def game() -> None:
             spawning_enemies = True
             wave += 1
             enemy_spawn_rate *= 0.9
-            # for i in range(random.randint(10, 20)):
-            #     location = SpawnLoc.random_spawn_side()
-            #     enemies.append(
-            #         Zombie(
-            #             location[0],
-            #             location[1],
-            #         ),
-            #     )
-            #     location2 = SpawnLoc.random_spawn_side()
-            #     enemies.append(
-            #         Gladiator(
-            #             location2[0],
-            #             location2[1],
-            #         ),
-            #     )
 
         player.update(dt, events)
         if player.attacking:
@@ -333,13 +316,13 @@ def game() -> None:
         for projectile in enemy_projectiles:
             projectile.draw(screen)
 
-        for rect in trees:
-            pygame.draw.rect(
-                screen,
-                (255, 0, 0),
-                rect.get_hitbox(),
-                1,
-            )
+        # for rect in trees:
+        #     pygame.draw.rect(
+        #         screen,
+        #         (255, 0, 0),
+        #         rect.get_hitbox(),
+        #         1,
+        #     )
 
         # pygame.draw.rect(
         #     screen,

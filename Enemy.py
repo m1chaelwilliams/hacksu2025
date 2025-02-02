@@ -8,8 +8,6 @@ from animation import Animation
 from projectile import Projectile
 
 
-
-
 class EnemyMovementState:
     Idle = 10
     Running = 20
@@ -165,7 +163,7 @@ class Gladiator(Enemy):
     img: pygame.Surface = None
     ideal_player_distance = Constants.TILESIZE * 3
     starting_health = 5
-    speed = 50
+    speed = 100
     attack_power = 2
     attack_cooldown = 2
 
@@ -180,6 +178,95 @@ class Gladiator(Enemy):
         self.speed = Gladiator.speed
         self.attack_power = Gladiator.attack_power
         self.attack_cooldown = Gladiator.attack_cooldown
+
+    def follow_player(self, player: Rect, dt: float) -> None:
+        self.attack_cooldown -= dt
+        self.vel = Vector2(0, 0)
+
+        if player.x > self.drect.x:
+            self.vel.x = self.speed
+            self.direction = EnemyDirection.Right
+        elif player.x < self.drect.x:
+            self.vel.x = -self.speed
+            self.direction = EnemyDirection.Left
+
+        if player.y > self.drect.y:
+            self.vel.y = self.speed
+            self.direction = EnemyDirection.Down
+        elif player.y < self.drect.y:
+            self.vel.y = -self.speed
+            self.direction = EnemyDirection.Up
+
+        if (
+            Vector2(self.drect.x, self.drect.y).distance_to(Vector2(player.x, player.y))
+            < Gladiator.ideal_player_distance * 2
+        ):
+            if self.attack_cooldown <= 0.0:
+                self.wants_attack = True
+
+    def attack(self, player, proj_list, imgs) -> None:
+        self.wants_attack = False
+        self.attack_cooldown = Gladiator.attack_cooldown
+        proj_list.append(
+            Projectile(
+                (self.drect.center[0], self.drect.center[1]),
+                Vector2(
+                    player.get_hitbox().center[0] - self.hitbox.center[0],
+                    player.get_hitbox().center[1] - self.hitbox.center[1],
+                ).normalize(),
+                1000,
+                imgs["shuriken"],
+                Animation(
+                    0,
+                    1,
+                    0.8,
+                ),
+            )
+        )
+
+    # IDEA: fast but low hp. has dashes?
+    class Wolf:
+        def follow_player(self, player: Rect, dt: float) -> None:
+            self.attack_cooldown -= dt
+
+            if player.x > self.drect.x + Gladiator.ideal_player_distance:
+                self.vel.x = self.speed
+                self.direction = EnemyDirection.Right
+            elif player.x < self.drect.x - Gladiator.ideal_player_distance:
+                self.vel.x = -self.speed
+                self.direction = EnemyDirection.Left
+            else:
+                self.vel.x = 0
+
+            if player.y > self.drect.y + Gladiator.ideal_player_distance:
+                self.vel.y = self.speed
+                self.direction = EnemyDirection.Down
+            elif player.y < self.drect.y - Gladiator.ideal_player_distance:
+                self.vel.y = -self.speed
+                self.direction = EnemyDirection.Up
+            else:
+                self.vel.y = 0
+
+
+class Robot(Enemy):
+    img: pygame.Surface = None
+    ideal_player_distance = Constants.TILESIZE * 3
+    starting_health = 5
+    speed = 100.0
+    attack_power = 1
+    attack_cooldown = 2
+
+    def __init__(self, x, y):
+        super().__init__(x, y, Vector2(0, 1), health=Gladiator.starting_health)
+        self.attack_power = Robot.attack_power
+        if not Robot.img:
+            Robot.img = utils.load_img(
+                "assets/characters/RobotCamouflage/SpriteSheet.png",
+            )
+        self.sprite_sheet = Robot.img
+        self.speed = Robot.speed
+        self.attack_power = Robot.attack_power
+        self.attack_cooldown = Robot.attack_cooldown
 
     def follow_player(self, player: Rect, dt: float) -> None:
         self.attack_cooldown -= dt
@@ -209,18 +296,22 @@ class Gladiator(Enemy):
             if self.attack_cooldown <= 0.0:
                 self.wants_attack = True
 
-    def attack(self, player, proj_list, imgs) -> None:
-        self.wants_attack = False
-        self.attack_cooldown = Gladiator.attack_cooldown
+    def spawn_proj(
+        self,
+        img: pygame.Surface,
+        proj_list,
+        pos: tuple[int, int],
+        dir: tuple[int, int],
+    ) -> None:
         proj_list.append(
             Projectile(
-                (self.drect.center[0], self.drect.center[1]),
+                pos,
                 Vector2(
-                    player.get_hitbox().center[0] - self.hitbox.center[0],
-                    player.get_hitbox().center[1] - self.hitbox.center[1],
+                    dir[0],
+                    dir[1],
                 ).normalize(),
                 1000,
-                imgs["shuriken"],
+                img,
                 Animation(
                     0,
                     1,
@@ -229,7 +320,31 @@ class Gladiator(Enemy):
             )
         )
 
-    #IDEA: fast but low hp. has dashes?
+    def attack(self, player, proj_list, imgs) -> None:
+        self.wants_attack = False
+        self.attack_cooldown = Gladiator.attack_cooldown
+        self.spawn_proj(imgs["shuriken"], proj_list, self.drect.center, (1, 0))
+        self.spawn_proj(imgs["shuriken"], proj_list, self.drect.center, (0, 1))
+        self.spawn_proj(imgs["shuriken"], proj_list, self.drect.center, (-1, 0))
+        self.spawn_proj(imgs["shuriken"], proj_list, self.drect.center, (0, -1))
+        # proj_list.append(
+        #     Projectile(
+        #         (self.drect.center[0], self.drect.center[1]),
+        #         Vector2(
+        #             1,
+        #             0,
+        #         ).normalize(),
+        #         1000,
+        #         imgs["shuriken"],
+        #         Animation(
+        #             0,
+        #             1,
+        #             0.8,
+        #         ),
+        #     )
+        # )
+
+    # IDEA: fast but low hp. has dashes?
     class Wolf:
         def follow_player(self, player: Rect, dt: float) -> None:
             self.attack_cooldown -= dt
