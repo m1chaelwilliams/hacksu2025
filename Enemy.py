@@ -271,14 +271,23 @@ class Robot(Enemy):
     def follow_player(self, player: Rect, dt: float) -> None:
         self.attack_cooldown -= dt
 
+        if random.randint(0, 4) == 4:
+            dir = random.randint(1, 4)
+            if dir == 1:
+                self.vel.x = self.speed * 10.0
+            elif dir == 2:
+                self.vel.x = -self.speed * 10.0
+            elif dir == 3:
+                self.vel.y = -self.speed * 10.0
+            else:
+                self.vel.y = self.speed * 10.0
+
         if player.x > self.drect.x + Gladiator.ideal_player_distance:
             self.vel.x = self.speed
             self.direction = EnemyDirection.Right
         elif player.x < self.drect.x - Gladiator.ideal_player_distance:
             self.vel.x = -self.speed
             self.direction = EnemyDirection.Left
-        else:
-            self.vel.x = 0
 
         if player.y > self.drect.y + Gladiator.ideal_player_distance:
             self.vel.y = self.speed
@@ -286,8 +295,6 @@ class Robot(Enemy):
         elif player.y < self.drect.y - Gladiator.ideal_player_distance:
             self.vel.y = -self.speed
             self.direction = EnemyDirection.Up
-        else:
-            self.vel.y = 0
 
         if (
             Vector2(self.drect.x, self.drect.y).distance_to(Vector2(player.x, player.y))
