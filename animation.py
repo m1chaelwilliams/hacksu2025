@@ -1,20 +1,20 @@
 from pygame import Rect
-from constants import Constants
 
 
 class Animation:
-    def __init__(self, first: int, last: int, speed: float):
+    def __init__(self, first: int, last: int, speed: float, step=1):
         self.first = first
         self.last = last
         self.cur = self.first
         self.speed = speed
         self.duration_left = speed
+        self.step = step
 
     def update(self, dt: float) -> None:
         self.duration_left -= dt
         if self.duration_left <= 0.0:
             self.duration_left = self.speed
-            self.cur += 1
+            self.cur += self.step
             if self.cur > self.last:
                 self.cur = self.first
 

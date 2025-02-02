@@ -77,7 +77,7 @@ def game() -> None:
                 if e.key == pygame.K_q:
                     running = False
 
-        player.update(events)
+        player.update(dt, events)
         if player.attacking:
             player.attacking = False
             mouse_pos = pygame.mouse.get_pos()
@@ -156,19 +156,19 @@ def game() -> None:
                 1,
             )
 
-        pygame.draw.rect(
-            screen,
-            (0, 255, 0),
-            player.hitbox,
-            1,
-        )
-        pygame.draw.rect(
-            screen,
-            (0, 0, 255),
-            player.drect,
-            1,
-        )
-
+        # pygame.draw.rect(
+        #     screen,
+        #     (0, 255, 0),
+        #     player.hitbox,
+        #     1,
+        # )
+        # pygame.draw.rect(
+        #     screen,
+        #     (0, 0, 255),
+        #     player.drect,
+        #     1,
+        # )
+        #
         # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
 
         pygame.display.update()
