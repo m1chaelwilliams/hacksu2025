@@ -19,9 +19,7 @@ class Entity:
 
 def game() -> None:
     pygame.init()
-    screen = pygame.display.set_mode(
-        (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT),
-    )
+    screen = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
     tilemap = load_map("assets/maps/map1.json")
     tileset_floor_img_unscaled = pygame.image.load(
         "assets/tilesets/TilesetFloor.png",
@@ -133,7 +131,8 @@ def game() -> None:
             tileset_width_in_tiles=12,
         )
         player.draw(screen)
-        zombie.draw(screen)        for projectile in projectiles:
+        zombie.draw(screen)        
+        for projectile in projectiles:
             projectile.draw(screen)
 
         for rect in trees:
