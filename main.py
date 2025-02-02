@@ -56,7 +56,7 @@ def game() -> None:
 
     player = Player([], (14.5, 9.5))
     projectiles: list[Projectile] = []
-
+    
     zombie = Zombie(100, 100, 50, 50, speed=200)
     running = True
     dt = 0.0

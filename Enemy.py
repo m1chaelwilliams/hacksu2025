@@ -9,16 +9,16 @@ def random_spawn_location() -> tuple[int, int]:
     location = random.randint(1, 4)
     if location == 1:
         # top
-        return (5, 0)
+        return (7, 0)
     elif location == 2:
         # right
-        return (5, 5)
+        return (20, 5)
     elif location == 3:
         # bottom
-        return (5, 5)
+        return (0, 15)
     elif location == 4:
         # left
-        return (5, 5)
+        return (20, 20)
 
 
 class Enemy(pygame.sprite.Sprite):
@@ -38,6 +38,7 @@ class Enemy(pygame.sprite.Sprite):
         self.vel = Vector2(0, 0)
         self.max_health = health
         self.curr_health = health
+
         init_pos = random_spawn_location()
         self.drect = Rect(
             # 
@@ -54,16 +55,13 @@ class Enemy(pygame.sprite.Sprite):
             Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
         )
 
-        # Placeholder sprite if none provided
         self.sprite_sheet = pygame.Surface((16, 16))
-        self.sprite_sheet.fill((255, 0, 0))  # Red box for debugging
+        self.sprite_sheet.fill((255, 0, 0)) 
 
     def update(self, events: list[pygame.event.Event]) -> None:
         count = 0
 
-
-
-
+      
     def move_x(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
         self.hitbox.x += self.vel.x * dt
@@ -71,6 +69,18 @@ class Enemy(pygame.sprite.Sprite):
     def move_y(self, dt: float) -> None:
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
+
+    def collides(self, rect: Rect) -> bool:
+        return self.hitbox.colliderect(rect)
+
+    def update_drect_from_hitbox(self) -> None:
+        self.drect = Rect(
+            self.hitbox.x - self.hitbox_topleft_offset[0],
+            self.hitbox.y - self.hitbox_topleft_offset[1],
+            Constants.TILESIZE,
+            Constants.TILESIZE,
+        )
+      
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite_sheet, self.drect, self.srect)
