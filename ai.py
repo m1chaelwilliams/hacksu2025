@@ -2,6 +2,7 @@ import gym
 from gym import spaces
 import numpy as np
 from constants import Constants
+from pygame.math import Vector2
 
 MAX_ENEMIES = 50
 MAX_PROJECTILES = 50
@@ -76,6 +77,8 @@ class BulletHellEnv(gym.Env):
         reward = 1.0
         if self.game.player.health > 0:
             reward += 0.1
+        if self.game.player.health == 0:
+            reward -= 100.0
         if self.game.player.health < self.prev_player_health:
             reward -= 10.0
         enemy_health_sum = sum(enemy.curr_health for enemy in self.game.enemies)
@@ -88,6 +91,7 @@ class BulletHellEnv(gym.Env):
             ):
                 reward += 10.0
         reward -= len(self.game.projectiles) * 0.1
+
         self.prev_enemy_count = len(self.game.enemies)
         self.prev_enemy_health_sum = enemy_health_sum
         if self.game.player.vel.magnitude() < 0.1:

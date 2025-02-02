@@ -149,6 +149,8 @@ def game() -> None:
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_q:
                     running = False
+                if e.key == pygame.K_r:
+                    game.over = True
 
         pos = pygame.math.Vector2(
             player.get_hitbox().center[0], player.get_hitbox().center[1]
@@ -177,6 +179,7 @@ def game() -> None:
             player.update_drect_from_hitbox()
             obs = env.reset()
             total_reward = 0
+            game.over = False
 
         print(action)
         action = action[0]
@@ -348,6 +351,13 @@ def game() -> None:
             sprite_size=(Constants.TILESIZE * 2, Constants.TILESIZE * 2),
             tileset_width_in_tiles=12,
         )
+        # tilemap.draw_layer(
+        #     2,
+        #     screen,
+        #     imgs["tileset_trees"],
+        #     sprite_size=(Constants.TILESIZE, Constants.TILESIZE),
+        #     tileset_width_in_tiles=24,
+        # )
         player.draw(screen)
 
         hit_player = False
