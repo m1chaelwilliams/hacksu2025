@@ -10,6 +10,7 @@ from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_m
 from itertools import filterfalse
 from animation import Animation
 import pygame.mixer as mixer
+from spawn import SpawnLoc
 import random
 
 
@@ -41,35 +42,7 @@ def draw_player_ui(
         )
         cur_x += Constants.TILESIZE
 
-#once top left bottom right are decided, choose which slot
-class SpawnLoc:
-    locations = [
-        [
-            (Constants.WINDOW_WIDTH / 2 - 50, 0),
-            (Constants.WINDOW_WIDTH / 2 + 10, 0),
-            (Constants.WINDOW_WIDTH / 2 + 30, 0),
-        ],
-        [ 
-            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 + 30),
-            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 - 10),
-            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 - 50),
-        ],
-        [  
-            (Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT),
-            (Constants.WINDOW_WIDTH / 2 + 10, Constants.WINDOW_HEIGHT),
-            (Constants.WINDOW_WIDTH / 2 + 30, Constants.WINDOW_HEIGHT),
-        ],
-        [ 
-            (0, Constants.WINDOW_HEIGHT / 2 + 30),
-            (0, Constants.WINDOW_HEIGHT / 2 - 10),
-            (0, Constants.WINDOW_HEIGHT / 2 - 50),
-        ],
-    ]
 
-def random_spawn_side() -> tuple[int, int]:
-    spawn_side = random.choice(range(len(SpawnLoc.locations))) 
-    spawn_slot = random.choice(SpawnLoc.locations[spawn_side]) 
-    return spawn_slot
 
 
 def game() -> None:
@@ -121,14 +94,14 @@ def game() -> None:
 
     enemies = []
     for i in range(2):
-        location = random_spawn_side()
+        location = SpawnLoc.random_spawn_side()
         enemies.append(
             Zombie(
                 location[0],
                 location[1],
             ),
         )
-        location2 = random_spawn_side()
+        location2 = SpawnLoc.random_spawn_side()
         enemies.append(
             Gladiator(
                 location2[0],
@@ -182,14 +155,14 @@ def game() -> None:
         
         if len(enemies) == 0:
             for i in range(random.randint(10,20)):
-                location = random_spawn_side()
+                location = SpawnLoc.random_spawn_side()
                 enemies.append(
                     Zombie(
                         location[0],
                         location[1],
                     ),
                 )
-                location2 = random_spawn_side()
+                location2 = SpawnLoc.random_spawn_side()
                 enemies.append(
                     Gladiator(
                         location2[0],

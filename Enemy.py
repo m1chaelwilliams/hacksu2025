@@ -128,7 +128,7 @@ class Zombie(Enemy):
 
     img: pygame.Surface = None
     starting_health = 3
-    speed = 100
+    speed = 60
 
     def __init__(self, x, y):
         super().__init__(x, y, Vector2(0, 1), health=Zombie.starting_health)
@@ -228,3 +228,26 @@ class Gladiator(Enemy):
                 ),
             )
         )
+
+    #IDEA: fast but low hp. has dashes?
+    class Wolf:
+        def follow_player(self, player: Rect, dt: float) -> None:
+            self.attack_cooldown -= dt
+
+            if player.x > self.drect.x + Gladiator.ideal_player_distance:
+                self.vel.x = self.speed
+                self.direction = EnemyDirection.Right
+            elif player.x < self.drect.x - Gladiator.ideal_player_distance:
+                self.vel.x = -self.speed
+                self.direction = EnemyDirection.Left
+            else:
+                self.vel.x = 0
+
+            if player.y > self.drect.y + Gladiator.ideal_player_distance:
+                self.vel.y = self.speed
+                self.direction = EnemyDirection.Down
+            elif player.y < self.drect.y - Gladiator.ideal_player_distance:
+                self.vel.y = -self.speed
+                self.direction = EnemyDirection.Up
+            else:
+                self.vel.y = 0
