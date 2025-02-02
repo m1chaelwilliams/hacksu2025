@@ -9,8 +9,10 @@ def game() -> None:
     tilemap = load_map("assets/maps/map1.json")
     tileset_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
 
+    img = pygame.image.load("assets/ninja_adventure/Actor/Animals/Fish/FacesetRed.png")
+    
     clock = pygame.time.Clock()
- 
+    
     running = True
     while running:
 
@@ -22,10 +24,20 @@ def game() -> None:
         screen.fill((120, 180, 255, 255))
 
         tilemap.draw(screen, tileset_img)
-
+        
         pygame.display.update()
         
-        print("tick " + str(pygame.time.get_ticks()))
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w]:
+            img.y -= 300
+        if keys[pygame.K_s]:
+            img.y += 300
+        if keys[pygame.K_a]:
+            img.x -= 300
+        if keys[pygame.K_d]:
+            img.x += 300
+
+        #print("tick " + str(pygame.time.get_ticks()))
         clock.tick(60)
         # foo = 1
         # print(f"foo is {foo}", )
