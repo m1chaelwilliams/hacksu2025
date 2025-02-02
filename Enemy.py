@@ -60,18 +60,18 @@ class Enemy(pygame.sprite.Sprite):
         self.sprite_sheet.fill((255, 0, 0))  # Red box for debugging
 
     def update(self) -> None:
-        self.vel.x = 600
-        self.vel.y = 300
+        self.vel.x = 0
+        self.vel.y = 0
 
 
     def destroy(self):
         print("Enemy destroyed")
 
-    def x_move(self, dt: float) -> None:
+    def move_x(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
         self.hitbox.x += self.vel.x * dt
         
-    def y_move(self, dt: float) -> None:
+    def move_y(self, dt: float) -> None:
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
 
@@ -97,5 +97,5 @@ class Zombie(Enemy):
         self.sprite_sheet = pygame.image.load(sprite_path)
 
     def follow_player(self, player_rect: Rect, dt: float) -> None:
-        self.vel.x += self.speed  # Move to the right
-        print(f"drect x is {self.drect.x}")
+        self.vel.x = self.speed  # Move right at constant speed
+        self.vel.y = 0  # No vertical movement
