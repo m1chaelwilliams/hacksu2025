@@ -5,7 +5,8 @@ from constants import Constants
 import random
 import utils
 from animation import Animation
-from typing import List, Union
+from projectile import Projectile
+
 
 def random_spawn_location() -> tuple[int, int]:
     location = random.randint(1, 4)
@@ -86,9 +87,14 @@ class Enemy(pygame.sprite.Sprite):
         }
         self.direction: EnemyDirection = EnemyDirection.Down
         self.movement_state: EnemyMovementState = EnemyMovementState.Idle
+        self.wants_attack = False
+        self.attack_cooldown = 1.0
 
     def update(self, dt: float, events: list[pygame.event.Event]) -> None:
         self.animations[self.direction + self.movement_state].update(dt)
+
+    def attack(self, player, proj_list, imgs) -> None:
+        pass
 
     def move_x(self, dt: float) -> None:
         self.drect.x += self.vel.x * dt
@@ -135,15 +141,18 @@ class Enemy(pygame.sprite.Sprite):
 class Zombie(Enemy):
 
     img: pygame.Surface = None
+    starting_health = 3
+    speed = 100
 
-    def __init__(self, x, y, speed=1, health=15):
-        super().__init__(x, y, Vector2(0, 1), health=health)
-        self.attack_power = 5
+    def __init__(self, x, y):
+        super().__init__(x, y, Vector2(0, 1), health=Zombie.starting_health)
+        self.attack_power = 1
         if not Zombie.img:
             Zombie.img = utils.load_img(
                 "assets/characters/Reptile/Reptile.png",
             )
         self.sprite_sheet = Zombie.img
+        self.speed = Zombie.speed
 
     def follow_player(self, player: Rect, dt: float) -> None:
         if player.x > self.drect.x:
@@ -163,40 +172,73 @@ class Zombie(Enemy):
             self.direction = EnemyDirection.Up
         else:
             self.vel.y = 0
-
-
-
 
 
 class Gladiator(Enemy):
 
     img: pygame.Surface = None
+    ideal_player_distance = Constants.TILESIZE * 3
+    starting_health = 5
+    speed = 50
+    attack_power = 2
+    attack_cooldown = 2
 
-    def __init__(self, x, y, speed=1, health=15):
-        super().__init__(x, y, Vector2(0, 1), health=health)
-        self.attack_power = 5
+    def __init__(self, x, y):
+        super().__init__(x, y, Vector2(0, 1), health=Gladiator.starting_health)
+        self.attack_power = Gladiator.attack_power
         if not Gladiator.img:
             Gladiator.img = utils.load_img(
                 "assets/characters/GladiatorBlue/SpriteSheet.png",
             )
         self.sprite_sheet = Gladiator.img
+        self.speed = Gladiator.speed
+        self.attack_power = Gladiator.attack_power
+        self.attack_cooldown = Gladiator.attack_cooldown
 
     def follow_player(self, player: Rect, dt: float) -> None:
-        if player.x > self.drect.x:
+        self.attack_cooldown -= dt
+
+        if player.x > self.drect.x + Gladiator.ideal_player_distance:
             self.vel.x = self.speed
             self.direction = EnemyDirection.Right
-        elif player.x < self.drect.x:
+        elif player.x < self.drect.x - Gladiator.ideal_player_distance:
             self.vel.x = -self.speed
             self.direction = EnemyDirection.Left
         else:
             self.vel.x = 0
 
-        if player.y > self.drect.y:
+        if player.y > self.drect.y + Gladiator.ideal_player_distance:
             self.vel.y = self.speed
             self.direction = EnemyDirection.Down
-        elif player.y < self.drect.y:
+        elif player.y < self.drect.y - Gladiator.ideal_player_distance:
             self.vel.y = -self.speed
             self.direction = EnemyDirection.Up
         else:
             self.vel.y = 0
 
+        if (
+            Vector2(self.drect.x, self.drect.y).distance_to(Vector2(player.x, player.y))
+            < Gladiator.ideal_player_distance * 2
+        ):
+            if self.attack_cooldown <= 0.0:
+                self.wants_attack = True
+
+    def attack(self, player, proj_list, imgs) -> None:
+        self.wants_attack = False
+        self.attack_cooldown = Gladiator.attack_cooldown
+        proj_list.append(
+            Projectile(
+                (self.drect.center[0], self.drect.center[1]),
+                Vector2(
+                    player.get_hitbox().center[0] - self.hitbox.center[0],
+                    player.get_hitbox().center[1] - self.hitbox.center[1],
+                ).normalize(),
+                1000,
+                imgs["shuriken"],
+                Animation(
+                    0,
+                    1,
+                    0.8,
+                ),
+            )
+        )

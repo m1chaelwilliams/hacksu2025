@@ -21,9 +21,12 @@ class PlayerDirection:
 class Player(pygame.sprite.Sprite):
 
     speed = 200
-    
+    starting_health = 10
+    attacked_cooldown = 1.0
+
     def __init__(self, groups, init_pos: tuple[int, int]):
         self.attacking = False
+        self.health = Player.starting_health
         self.sprite_sheet = utils.load_img(
             "assets/characters/NinjaDark/SpriteSheet.png"
         )
@@ -45,6 +48,7 @@ class Player(pygame.sprite.Sprite):
         }
         self.direction: PlayerDirection = PlayerDirection.Down
         self.movement_state: PlayerMovementState = PlayerMovementState.Idle
+        self.attacked_cooldown = Player.attacked_cooldown
 
         self.srect = Rect(
             0,
@@ -69,8 +73,12 @@ class Player(pygame.sprite.Sprite):
         )
 
     def update(self, dt: float, events: list[pygame.event.Event]) -> None:
-        self.vel.x = 0
-        self.vel.y = 0
+        self.attacked_cooldown -= dt
+
+        self.vel.x *= 0.3
+        self.vel.y *= 0.3
+        if self.vel.magnitude() < 0.5:
+            self.vel = Vector2(0, 0)
 
         keys = pygame.key.get_pressed()
         if keys[pygame.K_w]:
@@ -91,10 +99,10 @@ class Player(pygame.sprite.Sprite):
                 self.attacking = True
 
         self.animations[self.direction + self.movement_state].update(dt)
-        #normalize
+        # normalize
         if self.vel.length() > Player.speed:
-            self.vel.normalize_ip() 
-            self.vel *= Player.speed 
+            self.vel.normalize_ip()
+            self.vel *= Player.speed
 
     def draw(self, screen: pygame.Surface) -> None:
         if self.vel.magnitude() > 0.0:
