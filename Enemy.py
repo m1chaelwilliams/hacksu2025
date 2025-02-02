@@ -36,7 +36,7 @@ class EnemyDirection:
 
 
 class Enemy(pygame.sprite.Sprite):
-    zombie_speed = 100
+    speed = 100
 
     def __init__(
         self,
@@ -146,24 +146,54 @@ class Zombie(Enemy):
             )
         self.sprite_sheet = Zombie.img
 
-    def load_sprite(self, sprite_path: str) -> None:
-        self.sprite_sheet = pygame.image.load(sprite_path)
-
     def follow_player(self, player: Rect, dt: float) -> None:
         if player.x > self.drect.x:
-            self.vel.x = self.zombie_speed
+            self.vel.x = self.speed
             self.direction = EnemyDirection.Right
         elif player.x < self.drect.x:
-            self.vel.x = -self.zombie_speed
+            self.vel.x = -self.speed
             self.direction = EnemyDirection.Left
         else:
             self.vel.x = 0
 
         if player.y > self.drect.y:
-            self.vel.y = self.zombie_speed
+            self.vel.y = self.speed
             self.direction = EnemyDirection.Down
         elif player.y < self.drect.y:
-            self.vel.y = -self.zombie_speed
+            self.vel.y = -self.speed
+            self.direction = EnemyDirection.Up
+        else:
+            self.vel.y = 0
+
+
+class Gladiator(Enemy):
+
+    img: pygame.Surface = None
+
+    def __init__(self, x, y, speed=1, health=15):
+        super().__init__(x, y, Vector2(0, 1), health=health)
+        self.attack_power = 5
+        if not Gladiator.img:
+            Gladiator.img = utils.load_img(
+                "assets/characters/GladiatorBlue/SpriteSheet.png",
+            )
+        self.sprite_sheet = Gladiator.img
+
+    def follow_player(self, player: Rect, dt: float) -> None:
+        if player.x > self.drect.x:
+            self.vel.x = self.speed
+            self.direction = EnemyDirection.Right
+        elif player.x < self.drect.x:
+            self.vel.x = -self.speed
+            self.direction = EnemyDirection.Left
+        else:
+            self.vel.x = 0
+
+        if player.y > self.drect.y:
+            self.vel.y = self.speed
+            self.direction = EnemyDirection.Down
+        elif player.y < self.drect.y:
+            self.vel.y = -self.speed
             self.direction = EnemyDirection.Up
         else:
             self.vel.y = 0

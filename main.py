@@ -3,7 +3,7 @@ from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes, load_img
 from player import Player
-from Enemy import Enemy, Zombie
+from Enemy import Zombie, Gladiator
 from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
@@ -59,10 +59,18 @@ def game() -> None:
     player = Player([], (14.5, 9.5))
     projectiles: list[Projectile] = []
 
-    zombies = []
+    enemies = []
     for i in range(10):
-        zombies.append(
+        enemies.append(
             Zombie(
+                random.randint(0, Constants.WINDOW_WIDTH),
+                random.randint(0, Constants.WINDOW_HEIGHT),
+                speed=200,
+                health=3,
+            ),
+        )
+        enemies.append(
+            Gladiator(
                 random.randint(0, Constants.WINDOW_WIDTH),
                 random.randint(0, Constants.WINDOW_HEIGHT),
                 speed=200,
@@ -136,18 +144,18 @@ def game() -> None:
 
             if projectile.alive:
 
-                killed_zombie = False
-                for zombie in zombies:
-                    if zombie.get_hitbox().colliderect(projectile.drect):
+                killed_enemy = False
+                for enemy in enemies:
+                    if enemy.get_hitbox().colliderect(projectile.drect):
                         projectile.alive = False
                         sounds["hit"].play()
-                        zombie.curr_health -= projectile.damage
-                        print(zombie.curr_health)
-                        if zombie.curr_health <= 0.0:
-                            zombie.alive = False
-                            killed_zombie = True
-                if killed_zombie:
-                    zombies = list(filterfalse(lambda p: not p.alive, zombies))
+                        enemy.curr_health -= projectile.damage
+                        print(enemy.curr_health)
+                        if enemy.curr_health <= 0.0:
+                            enemy.alive = False
+                            killed_enemy = True
+                if killed_enemy:
+                    enemies = list(filterfalse(lambda p: not p.alive, enemies))
 
                 for tree in trees:
                     if projectile.drect.colliderect(tree.get_hitbox()):
@@ -173,12 +181,12 @@ def game() -> None:
         )
         player.draw(screen)
 
-        for zombie in zombies:
-            zombie.update(dt, events)
-            zombie.follow_player(player.drect, dt)
-            zombie.move_x(dt)
-            zombie.move_y(dt)
-            zombie.draw(screen)
+        for enemy in enemies:
+            enemy.update(dt, events)
+            enemy.follow_player(player.drect, dt)
+            enemy.move_x(dt)
+            enemy.move_y(dt)
+            enemy.draw(screen)
 
         # for enemie in enemies:
         #   enemie.draw(screen)
