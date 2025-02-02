@@ -64,6 +64,9 @@ class Player(pygame.sprite.Sprite):
         self.drect.y += self.vel.y * dt
         self.hitbox.y += self.vel.y * dt
 
+    def get_hitbox(self) -> Rect:
+        return self.hitbox
+
     def update_drect_from_hitbox(self) -> None:
         self.drect = Rect(
             self.hitbox.x - self.hitbox_topleft_offset[0],

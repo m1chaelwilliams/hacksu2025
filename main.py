@@ -3,13 +3,32 @@ from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes
 from player import Player
+from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
+
+
+class Entity:
+    def __init__(self, rect):
+        self.r = rect
+
+    def get_hitbox(self):
+        return self.r
 
 
 def game() -> None:
     pygame.init()
     screen = pygame.display.set_mode((1280, 720))
     tilemap = load_map("assets/maps/map1.json")
-    tileset_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
+    tileset_floor_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
+    tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
+    tree_rects = get_hitboxes(
+        0,
+        tilemap.layers[1],
+        (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
+        (5, 5),
+    )
+    trees = []
+    for rect in tree_rects:
+        trees.append(Entity(rect))
 
     clock = pygame.time.Clock()
 
@@ -29,24 +48,20 @@ def game() -> None:
         player.update()
 
         player.move_x(dt)
-
-        for rect in tree_rects:
-            if player.hitbox.colliderect(rect):
-                if player.vel.x > 0:
-                    player.hitbox.right = rect.left
-                else:
-                    player.hitbox.left = rect.right
-                player.update_drect_from_hitbox()
+        player.hitbox = handle_collisons_one_to_many_x(
+            player.hitbox,
+            player.vel,
+            trees,
+        )
+        player.update_drect_from_hitbox()
 
         player.move_y(dt)
-
-        for rect in tree_rects:
-            if player.hitbox.colliderect(rect):
-                if player.vel.y > 0:
-                    player.hitbox.bottom = rect.top
-                else:
-                    player.hitbox.top = rect.bottom
-                player.update_drect_from_hitbox()
+        player.hitbox = handle_collisons_one_to_many_y(
+            player.hitbox,
+            player.vel,
+            trees,
+        )
+        player.update_drect_from_hitbox()
 
         screen.fill((120, 180, 255, 255))
 
