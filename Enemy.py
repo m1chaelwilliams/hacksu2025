@@ -36,7 +36,6 @@ class Enemy(pygame.sprite.Sprite):
         self.srect = Rect(0, 0, 16, 16)
         self.direction = direction
         self.vel = Vector2(0, 0)
-        self.speed = speed 
         self.max_health = health
         self.curr_health = health
         init_pos = random_spawn_location()
