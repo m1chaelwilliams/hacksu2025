@@ -3,19 +3,48 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "map1.json",
     "expandedProjectPaths": [
+        "."
     ],
     "fileStates": {
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetFloor.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetNature.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/nature_small.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "map1.json": {
+            "scale": 2,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 181.5,
+                "y": 187.75
+            }
+        }
     },
     "last.imagePath": "/Users/michaelwilliams/dev/hacksu2025/assets/tilesets",
     "map.lastUsedFormat": "json",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "openFiles": [
+        "map1.json",
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetFloor.tsx",
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetNature.tsx",
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/nature_small.tsx"
     ],
     "project": "hacksu2025.tiled-project",
     "recentFiles": [
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/nature_small.tsx",
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetNature.tsx",
+        "/Users/michaelwilliams/dev/hacksu2025/assets/tiled_tilesets/TilesetFloor.tsx",
+        "map1.json"
     ],
     "tileset.lastUsedFormat": "tsx",
     "tileset.tileSize": {

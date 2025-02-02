@@ -40,7 +40,7 @@ class BulletHellEnv(gym.Env):
     def _get_state(self):
         player = self.game.player
         enemies = self.game.enemies[:MAX_ENEMIES]  # Limit to max enemies
-        projectiles = self.game.projectiles[
+        projectiles = self.game.enemy_projectiles[
             :MAX_PROJECTILES
         ]  # Limit to max projectiles
 
@@ -55,17 +55,21 @@ class BulletHellEnv(gym.Env):
         # Enemy positions (pad with -1 if fewer than MAX_ENEMIES)
         enemy_pos = np.full((MAX_ENEMIES * 2,), -1.0)
         for i, e in enumerate(enemies):
-            enemy_pos[i * 2 : i * 2 + 2] = [
+            enemy_pos[i * 2 : i * 2 + 4] = [
                 e.get_hitbox().x / Constants.WINDOW_WIDTH,
                 e.get_hitbox().y / Constants.WINDOW_HEIGHT,
+                e.vel.x / Constants.WINDOW_WIDTH,
+                e.vel.y / Constants.WINDOW_HEIGHT,
             ]
 
         # Projectile positions (pad with -1 if fewer than MAX_PROJECTILES)
         projectile_pos = np.full((MAX_PROJECTILES * 2,), -1.0)
         for i, p in enumerate(projectiles):
-            projectile_pos[i * 2 : i * 2 + 2] = [
+            projectile_pos[i * 2 : i * 2 + 4] = [
                 p.drect.x / Constants.WINDOW_WIDTH,
                 p.drect.y / Constants.WINDOW_HEIGHT,
+                p.dir.x * p.speed / Constants.WINDOW_WIDTH,
+                p.dir.y * p.speed / Constants.WINDOW_HEIGHT,
             ]
 
         # Concatenate to a fixed-size array
