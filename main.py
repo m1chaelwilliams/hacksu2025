@@ -8,6 +8,7 @@ from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
 from animation import Animation
+import pygame.mixer as mixer
 
 
 class Entity:
@@ -67,6 +68,9 @@ def game() -> None:
         (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
         (5, 5),
     )
+
+    mixer.music.load("assets/music/doom.mp3")
+    mixer.music.play(loops=100)
 
     while running:
         events = pygame.event.get()
@@ -138,8 +142,8 @@ def game() -> None:
 
         zombie.update(events)
         zombie.follow_player(player.drect, dt)
-        zombie.move_x(dt) 
-        zombie.move_y(dt) 
+        zombie.move_x(dt)
+        zombie.move_y(dt)
         zombie.draw(screen)
 
         # for enemie in enemies:
