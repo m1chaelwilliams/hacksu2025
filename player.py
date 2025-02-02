@@ -8,7 +8,7 @@ import utils
 class Player(pygame.sprite.Sprite):
 
     speed = 200
-
+    
     def __init__(self, groups, init_pos: tuple[int, int]):
         self.attacking = False
         self.sprite_sheet = utils.load_img(
@@ -51,10 +51,6 @@ class Player(pygame.sprite.Sprite):
             self.vel.y = Player.speed
         if keys[pygame.K_d]:
             self.vel.x = Player.speed
-
-        for e in events:
-            if e.type == pygame.MOUSEBUTTONDOWN:
-                self.attacking = True
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(

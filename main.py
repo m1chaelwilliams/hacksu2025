@@ -131,10 +131,11 @@ def game() -> None:
         )
         player.draw(screen)
 
-
-        zombie.follow_player(player.hitbox, dt)  # Set velocity
-        zombie.move_x(dt)  # Apply velocity to position
-        zombie.draw(screen)  # Draw enemy
+        zombie.update(events)
+        zombie.follow_player(player.drect, dt)
+        zombie.move_x(dt) 
+        zombie.move_y(dt) 
+        zombie.draw(screen)
 
 
         #for enemie in enemies:
