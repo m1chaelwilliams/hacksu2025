@@ -1,3 +1,5 @@
 class Constants:
     TILESIZE = 32
     IMPORT_TILESIZE = 16
+    WINDOW_HEIGHT = 640
+    WINDOW_WIDTH = 960

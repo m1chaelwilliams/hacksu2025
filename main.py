@@ -17,13 +17,11 @@ class Entity:
         return self.r
 
 
-WINDOW_HEIGHT = 720
-WINDOW_WIDTH = 1280
-
-
 def game() -> None:
     pygame.init()
-    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
+    screen = pygame.display.set_mode(
+        (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT),
+    )
     tilemap = load_map("assets/maps/map1.json")
     tileset_floor_img_unscaled = pygame.image.load(
         "assets/tilesets/TilesetFloor.png",
@@ -136,11 +134,11 @@ def game() -> None:
         for projectile in projectiles:
             projectile.draw(screen)
 
-        for rect in tree_rects:
+        for rect in trees:
             pygame.draw.rect(
                 screen,
                 (255, 0, 0),
-                rect,
+                rect.get_hitbox(),
                 1,
             )
 
