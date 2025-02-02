@@ -21,6 +21,7 @@ class Entity:
         return self.r
 
 
+
 def draw_player_ui(
     screen: pygame.Surface,
     imgs: dict[str, pygame.Surface],
@@ -39,6 +40,36 @@ def draw_player_ui(
             ),
         )
         cur_x += Constants.TILESIZE
+
+#once top left bottom right are decided, choose which slot
+class SpawnLoc:
+    locations = [
+        [
+            (Constants.WINDOW_WIDTH / 2 - 50, 0),
+            (Constants.WINDOW_WIDTH / 2 + 10, 0),
+            (Constants.WINDOW_WIDTH / 2 + 30, 0),
+        ],
+        [ 
+            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 + 30),
+            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 - 10),
+            (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2 - 50),
+        ],
+        [  
+            (Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT),
+            (Constants.WINDOW_WIDTH / 2 + 10, Constants.WINDOW_HEIGHT),
+            (Constants.WINDOW_WIDTH / 2 + 30, Constants.WINDOW_HEIGHT),
+        ],
+        [ 
+            (0, Constants.WINDOW_HEIGHT / 2 + 30),
+            (0, Constants.WINDOW_HEIGHT / 2 - 10),
+            (0, Constants.WINDOW_HEIGHT / 2 - 50),
+        ],
+    ]
+
+def random_spawn_side() -> tuple[int, int]:
+    spawn_side = random.choice(range(len(SpawnLoc.locations))) 
+    spawn_slot = random.choice(SpawnLoc.locations[spawn_side]) 
+    return spawn_slot
 
 
 def game() -> None:
@@ -90,21 +121,36 @@ def game() -> None:
 
     enemies = []
     for i in range(2):
+        location = random_spawn_side()
         enemies.append(
             Zombie(
-                random.randint(0, Constants.WINDOW_WIDTH),
-                random.randint(0, Constants.WINDOW_HEIGHT),
+                location[0],
+                location[1],
             ),
         )
+        location2 = random_spawn_side()
         enemies.append(
             Gladiator(
-                random.randint(0, Constants.WINDOW_WIDTH),
-                random.randint(0, Constants.WINDOW_HEIGHT),
+                location2[0],
+                location2[1],
             ),
         )
+    
+    # enemies.append(
+    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT,),
+    # )
+    # enemies.append(
+    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 10, Constants.WINDOW_HEIGHT,),
+    # )
+    # enemies.append(
+    #     Gladiator(Constants.WINDOW_WIDTH / 2 + 30, Constants.WINDOW_HEIGHT,),
+    # )
     running = True
     dt = 0.0
 
+    font = pygame.font.Font(None, 36) 
+    timer = 0 
+    last_time_update = pygame.time.get_ticks() 
     tree_rects = get_hitboxes(
         0,
         tilemap.layers[1],
@@ -118,6 +164,8 @@ def game() -> None:
         "hit": pygame.Sound("assets/sfx/Hit.wav"),
     }
 
+
+
     while running:
         events = pygame.event.get()
         for e in events:
@@ -126,6 +174,29 @@ def game() -> None:
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_q:
                     running = False
+
+        current_time = pygame.time.get_ticks()
+        if current_time - last_time_update >= 1000:  
+            timer += 1
+            last_time_update = current_time
+        
+        if len(enemies) == 0:
+            for i in range(random.randint(10,20)):
+                location = random_spawn_side()
+                enemies.append(
+                    Zombie(
+                        location[0],
+                        location[1],
+                    ),
+                )
+                location2 = random_spawn_side()
+                enemies.append(
+                    Gladiator(
+                        location2[0],
+                        location2[1],
+                    ),
+                )
+
 
         player.update(dt, events)
         if player.attacking:
@@ -278,6 +349,9 @@ def game() -> None:
 
         draw_player_ui(screen, imgs, player)
 
+        timer_text = font.render(f"Next Wave: {timer}", True, (255, 255, 255))
+        screen.blit(timer_text, (10, 600))
+        print(timer)
         pygame.display.update()
 
         dt = clock.tick(60) / 1000.0

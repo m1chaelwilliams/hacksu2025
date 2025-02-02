@@ -8,20 +8,6 @@ from animation import Animation
 from projectile import Projectile
 
 
-def random_spawn_location() -> tuple[int, int]:
-    location = random.randint(1, 4)
-    if location == 1:
-        # top
-        return (7, 0)
-    elif location == 2:
-        # right
-        return (20, 5)
-    elif location == 3:
-        # bottom
-        return (0, 15)
-    elif location == 4:
-        # left
-        return (20, 20)
 
 
 class EnemyMovementState:
