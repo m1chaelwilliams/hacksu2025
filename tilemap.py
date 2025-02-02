@@ -1,10 +1,7 @@
 import pygame
 import json
 from dataclasses import dataclass
-
-
-TILESIZE = 16
-NUM_TILES_PER_ROW = 22
+from constants import Constants
 
 
 @dataclass
@@ -24,8 +21,11 @@ class Tilemap:
         index: int,
         screen: pygame.Surface,
         tileset_img: pygame.Surface,
-        sprite_size: tuple[int, int] = (TILESIZE, TILESIZE),
-        tileset_width_in_tiles: int = NUM_TILES_PER_ROW,
+        sprite_size: tuple[int, int] = (
+            Constants.TILESIZE,
+            Constants.TILESIZE,
+        ),
+        tileset_width_in_tiles: int = 22,
     ) -> None:
         for i, item in enumerate(self.layers[index].tiles):
             item_id = item - self.layers[index].index_offset
@@ -34,8 +34,8 @@ class Tilemap:
 
             tile_x = int(i % self.layers[index].width)
             tile_y = int(i / self.layers[index].width)
-            pixel_x = tile_x * TILESIZE
-            pixel_y = tile_y * TILESIZE
+            pixel_x = tile_x * Constants.TILESIZE
+            pixel_y = tile_y * Constants.TILESIZE
 
             src_x = (item_id % tileset_width_in_tiles) * sprite_size[0]
             src_y = (item_id / tileset_width_in_tiles) * sprite_size[1]
