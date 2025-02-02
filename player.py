@@ -23,6 +23,8 @@ class Player(pygame.sprite.Sprite):
     speed = 200
     starting_health = 10
     attacked_cooldown = 1.0
+    can_attack_cooldown = 0.2
+    can_attack_cooldown_timer = can_attack_cooldown
 
     def __init__(self, groups, init_pos: tuple[int, int]):
         self.attacking = False
@@ -74,6 +76,7 @@ class Player(pygame.sprite.Sprite):
 
     def update(self, dt: float, events: list[pygame.event.Event]) -> None:
         self.attacked_cooldown -= dt
+        self.can_attack_cooldown_timer -= dt
 
         self.vel.x *= 0.3
         self.vel.y *= 0.3
@@ -159,4 +162,3 @@ class Player(pygame.sprite.Sprite):
             Constants.TILESIZE,
             Constants.TILESIZE,
         )
-

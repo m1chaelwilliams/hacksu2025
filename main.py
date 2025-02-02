@@ -181,6 +181,16 @@ def game() -> None:
             obs = env.reset()
             total_reward = 0
             game.over = False
+            enemies = []
+            game.enemies = enemies
+            enemy_projectiles = []
+            game.enemy_projectiles = enemy_projectiles
+            projectiles = []
+            game.projectiles = projectiles
+
+            num_enemies_to_spawn = 2
+            wave = 1
+            num_enemies_spawned = 0
 
         print(action)
         action = action[0]
@@ -197,7 +207,9 @@ def game() -> None:
             game.player.vel.y = game.player.speed
             game.player.direction = PlayerDirection.Down
         else:
-            game.player.attacking = True
+            if game.player.can_attack_cooldown_timer <= 0.0:
+                game.player.attacking = True
+                game.player.can_attack_cooldown_timer = game.player.can_attack_cooldown
 
         current_time = pygame.time.get_ticks()
         if current_time - last_time_update >= 1000:

@@ -207,13 +207,16 @@ class Gladiator(Enemy):
     def attack(self, player, proj_list, imgs) -> None:
         self.wants_attack = False
         self.attack_cooldown = Gladiator.attack_cooldown
+        vec = Vector2(
+            player.get_hitbox().center[0] - self.hitbox.center[0],
+            player.get_hitbox().center[1] - self.hitbox.center[1],
+        )
+        if vec.magnitude() != 0.0:
+            vec.normalize_ip()
         proj_list.append(
             Projectile(
                 (self.drect.center[0], self.drect.center[1]),
-                Vector2(
-                    player.get_hitbox().center[0] - self.hitbox.center[0],
-                    player.get_hitbox().center[1] - self.hitbox.center[1],
-                ).normalize(),
+                vec,
                 1000,
                 imgs["shuriken"],
                 Animation(
