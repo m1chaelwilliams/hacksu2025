@@ -3,11 +3,14 @@ from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes
 from player import Player
+from Enemy import Enemy, Zombie
 
+WINDOW_HEIGHT = 720
+WINDOW_WIDTH = 1280
 
 def game() -> None:
     pygame.init()
-    screen = pygame.display.set_mode((1280, 720))
+    screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     tilemap = load_map("assets/maps/map1.json")
     tileset_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
 
@@ -15,6 +18,7 @@ def game() -> None:
 
     player = Player([], (0, 0))
 
+    zombie = Zombie(100, 100, 50, 50, speed = 2)
     running = True
     dt = 0.0
 
@@ -38,6 +42,7 @@ def game() -> None:
 
         player.update()
 
+        zombie.draw(screen)
         player.move_x(dt)
 
         for rect in tree_rects:
@@ -97,8 +102,7 @@ def game() -> None:
         
         print("tick " + str(pygame.time.get_ticks()))
         clock.tick(60)
-        # foo = 1
-        # print(f"foo is {foo}", )
+
 
     pygame.quit()
 
