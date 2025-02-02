@@ -4,6 +4,7 @@ from tilemap import load_map
 from utils import get_hitboxes
 from player import Player
 from Enemy import Enemy, Zombie
+from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 
 
@@ -36,6 +37,7 @@ def game() -> None:
     clock = pygame.time.Clock()
 
     player = Player([], (0, 0))
+    projectiles: list[Projectile] = []
 
     zombie = Zombie(100, 100, 50, 50, speed = 2)
     running = True
@@ -52,14 +54,29 @@ def game() -> None:
     tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
     while running:
 
-        for e in pygame.event.get():
+        events = pygame.event.get()
+        for e in events:
             if e.type == pygame.QUIT:
                 running = False
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_q:
                     running = False
 
-        player.update()
+        player.update(events)
+        if player.attacking:
+            player.attacking = False
+            mouse_pos = pygame.mouse.get_pos()
+            proj_vec = pygame.math.Vector2(
+                mouse_pos[0] - player.drect.center[0],
+                mouse_pos[1] - player.drect.center[1],
+            ).normalize()
+            projectiles.append(
+                Projectile(
+                    (player.drect.x, player.drect.y),
+                    proj_vec,
+                    200,
+                )
+            )
 
         zombie.draw(screen)
         player.move_x(dt)
@@ -78,6 +95,10 @@ def game() -> None:
         )
         player.update_drect_from_hitbox()
 
+        for projectile in projectiles:
+            projectile.move_x(dt)
+            projectile.move_y(dt)
+
         screen.fill((120, 180, 255, 255))
 
         tilemap.draw_layer(0, screen, tileset_floor_img)
@@ -89,6 +110,8 @@ def game() -> None:
             tileset_width_in_tiles=12,
         )
         player.draw(screen)
+        for projectile in projectiles:
+            projectile.draw(screen)
 
         for rect in tree_rects:
             pygame.draw.rect(
@@ -114,10 +137,10 @@ def game() -> None:
         # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
 
         pygame.display.update()
-        
-        print("tick " + str(pygame.time.get_ticks()))
-        clock.tick(60)
 
+        dt = clock.tick(60) / 1000.0
+        # foo = 1
+        # print(f"foo is {foo}", )
 
     pygame.quit()
 

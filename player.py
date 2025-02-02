@@ -9,6 +9,7 @@ class Player(pygame.sprite.Sprite):
     speed = 200
 
     def __init__(self, groups, init_pos: tuple[int, int]):
+        self.attacking = False
         self.sprite_sheet = pygame.image.load(
             "assets/characters/NinjaDark/SpriteSheet.png"
         )
@@ -34,7 +35,7 @@ class Player(pygame.sprite.Sprite):
             Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
         )
 
-    def update(self) -> None:
+    def update(self, events: list[pygame.event.Event]) -> None:
         self.vel.x = 0
         self.vel.y = 0
         keys = pygame.key.get_pressed()
@@ -46,6 +47,10 @@ class Player(pygame.sprite.Sprite):
             self.vel.y = Player.speed
         if keys[pygame.K_d]:
             self.vel.x = Player.speed
+
+        for e in events:
+            if e.type == pygame.MOUSEBUTTONDOWN:
+                self.attacking = True
 
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(
