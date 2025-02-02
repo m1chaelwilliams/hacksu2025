@@ -1,2 +1,3 @@
 class Constants:
-    TILESIZE = 16
+    TILESIZE = 32
+    IMPORT_TILESIZE = 16

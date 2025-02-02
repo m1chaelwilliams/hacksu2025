@@ -6,6 +6,7 @@ from player import Player
 from Enemy import Enemy, Zombie
 from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
+from itertools import filterfalse
 
 
 class Entity:
@@ -15,19 +16,36 @@ class Entity:
     def get_hitbox(self):
         return self.r
 
+
 WINDOW_HEIGHT = 720
 WINDOW_WIDTH = 1280
+
 
 def game() -> None:
     pygame.init()
     screen = pygame.display.set_mode((WINDOW_WIDTH, WINDOW_HEIGHT))
     tilemap = load_map("assets/maps/map1.json")
-    tileset_floor_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
-    tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
+    tileset_floor_img_unscaled = pygame.image.load(
+        "assets/tilesets/TilesetFloor.png",
+    )
+    tileset_trees_img_unscaled = pygame.image.load(
+        "assets/tilesets/TilesetNature.png",
+    )
+    tileset_trees_img = pygame.transform.scale_by(
+        tileset_trees_img_unscaled,
+        Constants.TILESIZE / Constants.IMPORT_TILESIZE,
+    )
+    tileset_floor_img = pygame.transform.scale_by(
+        tileset_floor_img_unscaled,
+        Constants.TILESIZE / Constants.IMPORT_TILESIZE,
+    )
     tree_rects = get_hitboxes(
         0,
         tilemap.layers[1],
-        (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
+        (
+            Constants.TILESIZE * 2 - 10,
+            Constants.TILESIZE * 2 - 10,
+        ),
         (5, 5),
     )
     trees = []
@@ -39,7 +57,7 @@ def game() -> None:
     player = Player([], (0, 0))
     projectiles: list[Projectile] = []
 
-    zombie = Zombie(100, 100, 50, 50, speed = 2)
+    zombie = Zombie(100, 100, 50, 50, speed=2)
     running = True
     dt = 0.0
 
@@ -50,10 +68,7 @@ def game() -> None:
         (5, 5),
     )
 
-    tileset_floor_img = pygame.image.load("assets/tilesets/TilesetFloor.png")
-    tileset_trees_img = pygame.image.load("assets/tilesets/TilesetNature.png")
     while running:
-
         events = pygame.event.get()
         for e in events:
             if e.type == pygame.QUIT:
@@ -96,12 +111,20 @@ def game() -> None:
         player.update_drect_from_hitbox()
 
         for projectile in projectiles:
+            projectile.update(dt)
             projectile.move_x(dt)
             projectile.move_y(dt)
+        projectiles = list(filterfalse(lambda p: not p.alive, projectiles))
 
         screen.fill((120, 180, 255, 255))
 
-        tilemap.draw_layer(0, screen, tileset_floor_img)
+        tilemap.draw_layer(
+            0,
+            screen,
+            tileset_floor_img,
+            sprite_size=(Constants.TILESIZE, Constants.TILESIZE),
+            tileset_width_in_tiles=22,
+        )
         tilemap.draw_layer(
             1,
             screen,

@@ -1,6 +1,14 @@
 from pygame.rect import Rect
 from constants import Constants
 from tilemap import Tileset
+import pygame
+
+
+def load_img(path: str) -> pygame.Surface:
+    return pygame.transform.scale_by(
+        pygame.image.load(path),
+        Constants.TILESIZE / Constants.IMPORT_TILESIZE,
+    )
 
 
 def get_hitboxes(

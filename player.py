@@ -2,6 +2,7 @@ import pygame
 from pygame.rect import Rect
 from pygame.math import Vector2
 from constants import Constants
+import utils
 
 
 class Player(pygame.sprite.Sprite):
@@ -10,16 +11,16 @@ class Player(pygame.sprite.Sprite):
 
     def __init__(self, groups, init_pos: tuple[int, int]):
         self.attacking = False
-        self.sprite_sheet = pygame.image.load(
+        self.sprite_sheet = utils.load_img(
             "assets/characters/NinjaDark/SpriteSheet.png"
         )
         self.srect = Rect(
             0,
             0,
-            16,
-            16,
+            Constants.TILESIZE,
+            Constants.TILESIZE,
         )
-        
+
         self.drect: Rect = Rect(
             init_pos[0] * Constants.TILESIZE,
             init_pos[1] * Constants.TILESIZE,
