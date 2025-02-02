@@ -355,15 +355,15 @@ def game() -> None:
             enemy.follow_player(player.drect, dt)
             enemy.move_x(dt)
             enemy.hitbox = handle_collisons_one_to_many_x(
-                player.hitbox,
-                player.vel,
+                enemy.hitbox,
+                enemy.vel,
                 trees,
             )
             enemy.update_drect_from_hitbox()
             enemy.move_y(dt)
             enemy.hitbox = handle_collisons_one_to_many_y(
-                player.hitbox,
-                player.vel,
+                enemy.hitbox,
+                enemy.vel,
                 trees,
             )
             enemy.update_drect_from_hitbox()
