@@ -50,9 +50,10 @@ def game() -> None:
 
     clock = pygame.time.Clock()
 
-    player = Player([], (0, 0))
+    player = Player([], (14.5,9.5))
     projectiles: list[Projectile] = []
 
+    
     zombie = Zombie(100, 100, 50, 50, speed=2)
     running = True
     dt = 0.0
@@ -89,9 +90,7 @@ def game() -> None:
                 )
             )
 
-        zombie.draw(screen)
         player.move_x(dt)
-
         player.hitbox = handle_collisons_one_to_many_x(
             player.hitbox,
             player.vel,
@@ -131,7 +130,12 @@ def game() -> None:
             tileset_width_in_tiles=12,
         )
         player.draw(screen)
+
+        zombie.follow_player(player.hitbox, dt)
         zombie.draw(screen)        
+        #for enemie in enemies:
+        #   enemie.draw(screen)
+
         for projectile in projectiles:
             projectile.draw(screen)
 

@@ -7,18 +7,19 @@ import random
 def random_spawn_location()-> tuple[int, int]:
     location = random.randint(1,4)
     if location == 1:
-        return (Constants.WINDOW_WIDTH / 2, 0)
+        #top
+        return (5, 0)
     elif location == 2:
-        return (Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT / 2)
+        #right
+        return (5, 5)
     elif location == 3:
-        return (Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT)
+        #bottom
+        return (5, 5)
     elif location == 4:
-        return (0, Constants.WINDOW_HEIGHT / 2)
-    else:
-        print("Invalid location")
+        #left
+        return (5, 5)
 
 
-    
 
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, x: int, 
@@ -77,7 +78,7 @@ class Enemy(pygame.sprite.Sprite):
     def draw(self, screen: pygame.Surface) -> None:
         screen.blit(self.sprite_sheet, self.drect, self.srect)
 
-    def damage(self, damageAmt: int) -> None:
+    def on_damage(self, damageAmt: int) -> None:
         self.curr_health -= damageAmt
         if self.curr_health <= 0:
             self.destroy()
@@ -91,5 +92,10 @@ class Zombie(Enemy):
             "assets/characters/NinjaDark/SpriteSheet.png"
         )
 
+
     def load_sprite(self, sprite_path: str) -> None:
         self.sprite_sheet = pygame.image.load(sprite_path)
+
+    def follow_player(self, player_rect: Rect, dt: float) -> None:
+        self.vel.x += self.speed  # Move to the right
+        print(f"drect x is {self.drect.x}")
