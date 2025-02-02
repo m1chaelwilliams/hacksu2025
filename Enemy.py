@@ -56,11 +56,12 @@ class Enemy(pygame.sprite.Sprite):
             self.drect.x + self.hitbox_topleft_offset[0],
             self.drect.y + self.hitbox_topleft_offset[1],
             Constants.TILESIZE - self.hitbox_topleft_offset[0] * 2,
-      s     Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
+            Constants.TILESIZE - self.hitbox_topleft_offset[1] * 2,
         )
 
+        # Placeholder sprite if none provided
         self.sprite_sheet = pygame.Surface((Constants.TILESIZE, Constants.TILESIZE))
-        self.sprite_sheet.fill((255, 0, 0)) 
+        self.sprite_sheet.fill((255, 0, 0))  # Red box for debugging
 
     def update(self, events: list[pygame.event.Event]) -> None:
         count = 0
