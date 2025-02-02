@@ -16,6 +16,7 @@ class Projectile:
         speed: float,
         img: pygame.Surface,
         anim: Animation,
+        damage=1,
     ):
         self.drect = Rect(
             pos[0],
@@ -30,6 +31,7 @@ class Projectile:
         self.img = img
         self.img_num_tiles_per_row = int(self.img.width / Constants.TILESIZE)
         self.anim = anim
+        self.damage = 1
 
     def update(self, dt: float) -> None:
         self.anim.update(dt)

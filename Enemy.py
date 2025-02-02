@@ -29,8 +29,6 @@ class Enemy(pygame.sprite.Sprite):
         self,
         x: int,
         y: int,
-        width: int,
-        height: int,
         direction: Vector2 = Vector2(0, 1),
         health: int = 10,
         init_pos: tuple[int, int] = (5, 5),
@@ -42,12 +40,11 @@ class Enemy(pygame.sprite.Sprite):
         self.vel = Vector2(0, 0)
         self.max_health = health
         self.curr_health = health
-
-        init_pos = random_spawn_location()
+        init_pos = (x, y)
         self.drect = Rect(
             #
-            init_pos[0] * Constants.TILESIZE,
-            init_pos[1] * Constants.TILESIZE,
+            init_pos[0],
+            init_pos[1],
             Constants.TILESIZE,
             Constants.TILESIZE,
         )
@@ -62,6 +59,7 @@ class Enemy(pygame.sprite.Sprite):
         # Placeholder sprite if none provided
         self.sprite_sheet = pygame.Surface((Constants.TILESIZE, Constants.TILESIZE))
         self.sprite_sheet.fill((255, 0, 0))  # Red box for debugging
+        self.alive = True
 
     def update(self, events: list[pygame.event.Event]) -> None:
         count = 0
@@ -102,8 +100,8 @@ class Zombie(Enemy):
 
     img: pygame.Surface = None
 
-    def __init__(self, x, y, width, height, speed=1, health=15):
-        super().__init__(x, y, width, height, Vector2(0, 1), speed, health)
+    def __init__(self, x, y, speed=1, health=15):
+        super().__init__(x, y, Vector2(0, 1), health=health)
         self.attack_power = 5
         if not Zombie.img:
             Zombie.img = utils.load_img(
