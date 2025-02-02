@@ -122,11 +122,12 @@ def game() -> None:
 
     env = make_vec_env(lambda: BulletHellEnv(game), n_envs=1)
 
-    model = PPO(
-        "MlpPolicy",
-        env,
-        verbose=1,
-    )
+    # model = PPO(
+    #     "MlpPolicy",
+    #     env,
+    #     verbose=1,
+    # )
+    model = PPO.load("bullet_hell_ai")
     thread = threading.Thread(target=train, args=(model))
     thread.start()
     obs = env.reset()

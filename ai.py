@@ -90,7 +90,7 @@ class BulletHellEnv(gym.Env):
                 < self.prev_enemy_health_sum / self.prev_enemy_count
             ):
                 reward += 10.0
-        reward -= len(self.game.projectiles) * 0.1
+        reward -= len(self.game.projectiles)
 
         self.prev_enemy_count = len(self.game.enemies)
         self.prev_enemy_health_sum = enemy_health_sum

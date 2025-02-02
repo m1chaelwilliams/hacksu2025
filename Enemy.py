@@ -274,13 +274,13 @@ class Robot(Enemy):
         if random.randint(0, 4) == 4:
             dir = random.randint(1, 4)
             if dir == 1:
-                self.vel.x = self.speed * 10.0
+                self.vel.x = self.speed * 2.0
             elif dir == 2:
-                self.vel.x = -self.speed * 10.0
+                self.vel.x = -self.speed * 2.0
             elif dir == 3:
-                self.vel.y = -self.speed * 10.0
+                self.vel.y = -self.speed * 2.0
             else:
-                self.vel.y = self.speed * 10.0
+                self.vel.y = self.speed * 2.0
 
         if player.x > self.drect.x + Gladiator.ideal_player_distance:
             self.vel.x = self.speed
