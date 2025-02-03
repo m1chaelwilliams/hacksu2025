@@ -24,6 +24,12 @@ class Projectile:
             Constants.TILESIZE,
             Constants.TILESIZE,
         )
+        self.hitbox = Rect(
+            pos[0] + 8,
+            pos[1] + 8,
+            Constants.TILESIZE - 16,
+            Constants.TILESIZE - 16,
+        )
         self.dir = dir
         self.speed = speed
         self.lifespan = Projectile.lifespan
@@ -42,9 +48,11 @@ class Projectile:
 
     def move_x(self, dt: float) -> None:
         self.drect.x += self.dir.x * self.speed * dt
+        self.hitbox.x += self.dir.x * self.speed * dt
 
     def move_y(self, dt: float) -> None:
         self.drect.y += self.dir.y * self.speed * dt
+        self.hitbox.y += self.dir.y * self.speed * dt
 
     def draw(self, screen: pygame.Surface) -> None:
         # DEBUG RECT BELOW

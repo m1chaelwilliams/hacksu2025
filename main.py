@@ -4,7 +4,7 @@ from constants import Constants
 from tilemap import load_map
 from utils import get_hitboxes, load_img
 from player import Player
-from Enemy import Zombie, Gladiator
+from Enemy import Zombie, Gladiator, Robot
 from projectile import Projectile
 from collisions import handle_collisons_one_to_many_x, handle_collisons_one_to_many_y
 from itertools import filterfalse
@@ -20,7 +20,6 @@ class Entity:
 
     def get_hitbox(self):
         return self.r
-
 
 
 def draw_player_ui(
@@ -43,8 +42,6 @@ def draw_player_ui(
         cur_x += Constants.TILESIZE
 
 
-
-
 def game() -> None:
     pygame.init()
     screen = pygame.display.set_mode((Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT))
@@ -56,25 +53,9 @@ def game() -> None:
         "shuriken": load_img("assets/weapons/shuriken/shuriken.png"),
     }
 
-    # tileset_floor_img_unscaled = pygame.image.load(
-    #     "assets/tilesets/TilesetFloor.png",
-    # )
-    # tileset_trees_img_unscaled = pygame.image.load(
-    #     "assets/tilesets/TilesetNature.png",
-    # )
-    # tileset_trees_img = pygame.transform.scale_by(
-    #     tileset_trees_img_unscaled,
-    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    # )
-    # tileset_floor_img = pygame.transform.scale_by(
-    #     tileset_floor_img_unscaled,
-    #     Constants.TILESIZE / Constants.IMPORT_TILESIZE,
-    # )
-
     shuriken_img = load_img("assets/weapons/shuriken/shuriken.png")
 
     tree_rects = get_hitboxes(
-        0,
         tilemap.layers[1],
         (
             Constants.TILESIZE * 2 - 10,
@@ -88,38 +69,18 @@ def game() -> None:
 
     clock = pygame.time.Clock()
 
-    player = Player([], (14.5, 9.5))
+    player = Player([], (Constants.WINDOW_WIDTH / 2.0, Constants.WINDOW_HEIGHT / 2.0))
     projectiles: list[Projectile] = []
     enemy_projectiles: list[Projectile] = []
 
     enemies = []
-    for i in range(2):
-        location = SpawnLoc.random_spawn_side()
-        enemies.append(
-            Zombie(
-                location[0],
-                location[1],
-            ),
-        )
-        location2 = SpawnLoc.random_spawn_side()
-        enemies.append(
-            Gladiator(
-                location2[0],
-                location2[1],
-            ),
-        )
-
     running = True
     dt = 0.0
 
-    font = pygame.font.Font(None, 36) 
-    last_time_update = pygame.time.get_ticks() 
-    tree_rects = get_hitboxes(
-        0,
-        tilemap.layers[1],
-        (Constants.TILESIZE * 2 - 10, Constants.TILESIZE * 2 - 10),
-        (5, 5),
-    )
+    font = pygame.font.Font(None, 36)
+    timer = 0
+    wave = 1
+    last_time_update = pygame.time.get_ticks()
 
     mixer.music.load("assets/music/doom.mp3")
     mixer.music.play(loops=100)
@@ -127,8 +88,11 @@ def game() -> None:
         "hit": pygame.Sound("assets/sfx/Hit.wav"),
     }
 
-    timer = 0
-    wave_interval = 15000
+    num_enemies_to_spawn = 2
+    num_enemies_spawned = 0
+    enemy_spawn_rate = 2.0
+    enemy_spawn_duration_left = enemy_spawn_rate
+    spawning_enemies = True
 
     while running:
         events = pygame.event.get()
@@ -142,30 +106,44 @@ def game() -> None:
 
 
         current_time = pygame.time.get_ticks()
-        if current_time - last_time_update >= 1000:  
+        if current_time - last_time_update >= 1000:
             timer += 1
             last_time_update = current_time
-        print(f"Current Time: current time: {current_time}")
-        
 
-        if current_time == wave_interval:
-
-            for i in range(random.randint(10,20)):
+        if spawning_enemies:
+            enemy_spawn_duration_left -= dt
+            if enemy_spawn_duration_left <= 0.0:
+                num_enemies_spawned += 1
+                if num_enemies_spawned == num_enemies_to_spawn:
+                    spawning_enemies = False
+                    num_enemies_to_spawn *= 2
+                enemy_spawn_duration_left = enemy_spawn_rate
                 location = SpawnLoc.random_spawn_side()
-                enemies.append(
-                    Zombie(
-                        location[0],
-                        location[1],
-                    ),
-                )
-                location2 = SpawnLoc.random_spawn_side()
-                enemies.append(
-                    Gladiator(
-                        location2[0],
-                        location2[1],
-                    ),
-                )
+                enemy_choice = random.randint(wave - 3, wave - 1)
+                enemy_choice = max(0, enemy_choice)
+                if enemy_choice == 0:
+                    enemies.append(
+                        Zombie(
+                            location[0],
+                            location[1],
+                        )
+                    )
+                elif enemy_choice == 1:
+                    enemies.append(
+                        Gladiator(
+                            location[0],
+                            location[1],
+                        )
+                    )
+                else:
+                    enemies.append(Robot(location[0], location[1]))
+            pass
 
+        if not spawning_enemies and len(enemies) == 0:
+            num_enemies_spawned = 0
+            spawning_enemies = True
+            wave += 1
+            enemy_spawn_rate *= 0.9
 
         player.update(dt, events)
         if player.attacking:
@@ -208,7 +186,7 @@ def game() -> None:
             projectile.move_y(dt)
 
             if projectile.alive:
-                if projectile.drect.colliderect(player.get_hitbox()):
+                if projectile.hitbox.colliderect(player.get_hitbox()):
                     sounds["hit"].play()
                     projectile.alive = False
                     player.health -= projectile.damage
@@ -217,7 +195,7 @@ def game() -> None:
                         running = False
 
                 for tree in trees:
-                    if projectile.drect.colliderect(tree.get_hitbox()):
+                    if projectile.hitbox.colliderect(tree.get_hitbox()):
                         projectile.alive = False
                         sounds["hit"].play()
         enemy_projectiles = list(filterfalse(lambda p: not p.alive, enemy_projectiles))
@@ -231,7 +209,7 @@ def game() -> None:
 
                 killed_enemy = False
                 for enemy in enemies:
-                    if enemy.get_hitbox().colliderect(projectile.drect):
+                    if enemy.get_hitbox().colliderect(projectile.hitbox):
                         projectile.alive = False
                         sounds["hit"].play()
                         enemy.curr_health -= projectile.damage
@@ -242,7 +220,7 @@ def game() -> None:
                     enemies = list(filterfalse(lambda p: not p.alive, enemies))
 
                 for tree in trees:
-                    if projectile.drect.colliderect(tree.get_hitbox()):
+                    if projectile.hitbox.colliderect(tree.get_hitbox()):
                         projectile.alive = False
                         sounds["hit"].play()
         projectiles = list(filterfalse(lambda p: not p.alive, projectiles))
@@ -285,41 +263,20 @@ def game() -> None:
 
             enemy.draw(screen)
 
-        # for enemie in enemies:
-        #   enemie.draw(screen)
-
         for projectile in projectiles:
             projectile.draw(screen)
         for projectile in enemy_projectiles:
             projectile.draw(screen)
 
-        for rect in trees:
-            pygame.draw.rect(
-                screen,
-                (255, 0, 0),
-                rect.get_hitbox(),
-                1,
-            )
-
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 255, 0),
-        #     player.hitbox,
-        #     1,
-        # )
-        # pygame.draw.rect(
-        #     screen,
-        #     (0, 0, 255),
-        #     player.drect,
-        #     1,
-        # )
-        #
-        # screen.blit(player_img, pos, pygame.rect.Rect(0, 0, 16, 16))
-
         draw_player_ui(screen, imgs, player)
 
-        timer_text = font.render(f"Next Wave: {timer}", True, (255, 255, 255))
+        timer_text = font.render(f"Elapsed time: {timer}", True, (255, 255, 255))
         screen.blit(timer_text, (10, 600))
+
+        wave_text = font.render(f"Wave: {wave}", True, (255, 255, 255))
+        screen_size = pygame.display.get_window_size()
+        screen.blit(wave_text, ((screen_size[0] - wave_text.width) / 2, 0.0))
+        # print(timer)
         pygame.display.update()
         dt = clock.tick(60) / 1000.0
 

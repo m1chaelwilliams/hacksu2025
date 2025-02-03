@@ -37,8 +37,8 @@ class Tilemap:
             pixel_x = tile_x * Constants.TILESIZE
             pixel_y = tile_y * Constants.TILESIZE
 
-            src_x = (item_id % tileset_width_in_tiles) * sprite_size[0]
-            src_y = (item_id / tileset_width_in_tiles) * sprite_size[1]
+            src_x = int(item_id % tileset_width_in_tiles) * sprite_size[0]
+            src_y = int(item_id / tileset_width_in_tiles) * sprite_size[1]
 
             screen.blit(
                 tileset_img,
@@ -71,3 +71,4 @@ def load_map(path: str) -> Tilemap:
 if __name__ == "__main__":
     tilemap = load_map("assets/maps/map1.json")
     print(len(tilemap.layers))
+
