@@ -108,21 +108,11 @@ def game() -> None:
                 location2[1],
             ),
         )
-    
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 50, Constants.WINDOW_HEIGHT,),
-    # )
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 - 10, Constants.WINDOW_HEIGHT,),
-    # )
-    # enemies.append(
-    #     Gladiator(Constants.WINDOW_WIDTH / 2 + 30, Constants.WINDOW_HEIGHT,),
-    # )
+
     running = True
     dt = 0.0
 
     font = pygame.font.Font(None, 36) 
-    timer = 0 
     last_time_update = pygame.time.get_ticks() 
     tree_rects = get_hitboxes(
         0,
@@ -137,7 +127,8 @@ def game() -> None:
         "hit": pygame.Sound("assets/sfx/Hit.wav"),
     }
 
-
+    timer = 0
+    wave_interval = 15000
 
     while running:
         events = pygame.event.get()
@@ -148,12 +139,17 @@ def game() -> None:
                 if e.key == pygame.K_q:
                     running = False
 
+
+
         current_time = pygame.time.get_ticks()
         if current_time - last_time_update >= 1000:  
             timer += 1
             last_time_update = current_time
+        print(f"Current Time: current time: {current_time}")
         
-        if len(enemies) == 0:
+
+        if current_time == wave_interval:
+
             for i in range(random.randint(10,20)):
                 location = SpawnLoc.random_spawn_side()
                 enemies.append(
@@ -324,9 +320,7 @@ def game() -> None:
 
         timer_text = font.render(f"Next Wave: {timer}", True, (255, 255, 255))
         screen.blit(timer_text, (10, 600))
-        print(timer)
         pygame.display.update()
-
         dt = clock.tick(60) / 1000.0
 
     pygame.quit()
