@@ -2,17 +2,23 @@
 
 ### Introduction
 
-Journey of the Ninja king is a SU 2025 Hackathon game project.
-It is a top-down arena fighting game where the player ninja fights off hoards of enemies.
-The Game is written in ```Python``` with ```PyGame``` for windowing, graphics, and audio.
-
-
-
+Journey of the Ninja king is a SU 2025 Hackathon game submission where the player, controlled by a reinforcement learning model,
+fights in a top-down arena game agains hordes of various enemies.
 
 <image src="images/Wave3.png" width=900>
 
-
 ### Technical Details
+
+The Game is written in ```Python``` with ```PyGame``` for windowing, graphics, and audio.
+
+### AI
+
+
+
+
+
+
+
 
 
 
