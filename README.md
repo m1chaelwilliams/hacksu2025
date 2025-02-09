@@ -5,7 +5,7 @@
 Journey of the Ninja king is a SU 2025 Hackathon game submission where the player, controlled by a reinforcement learning model,
 fights in a top-down arena game agains hordes of various enemies.
 
-<image src="images/Wave3.png" width=900>
+<image src="images/ReadMeImage.png" width=900>
 
 ### Technical Details
 
