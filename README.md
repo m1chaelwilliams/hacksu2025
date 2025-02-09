@@ -1,4 +1,4 @@
-#Journey of the Ninja King
+# Journey of the Ninja King
 
 ### Introduction
 
@@ -6,7 +6,7 @@ Journey of the Ninja king is a top-down arena fighting game where the player nin
 The Game is written in ```Python``` with ```PyGame```
 
 
-<image src="images/Wave3.png" width=200>
+<image src="images/Wave3.png" width=500>
 
 ## Install
 
