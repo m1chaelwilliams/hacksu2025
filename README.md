@@ -13,7 +13,7 @@ The Game is written in ```Python``` with ```PyGame``` for windowing, graphics, a
 
 ### AI
 
-[stable_baselines3](https://stable-baselines3.readthedocs.io/en/master/) and [Gymnasium](https://gymnasium.farama.org/)  libraries were used for the Reinforcement Learning Model.
+The AI player is power by [stable_baselines3](https://stable-baselines3.readthedocs.io/en/master/) and [Gymnasium](https://gymnasium.farama.org/)  libraries, which were used for the Reinforcement Learning.
 
 ## Install
 
